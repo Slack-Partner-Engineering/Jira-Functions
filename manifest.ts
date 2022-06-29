@@ -1,10 +1,10 @@
 import { DefineFunction, Manifest, Schema } from "deno-slack-sdk/mod.ts";
 
-export const FindIssue = DefineFunction({
-  callback_id: "find_issue",
+export const FindIssueByID = DefineFunction({
+  callback_id: "find_issue_by_id",
   title: "Find an Issue",
   description: "Find an issue in Jira right from Slack.",
-  source_file: "functions/find_issue.ts",
+  source_file: "functions/find_issue_by_id.ts",
   input_parameters: {
     properties: {
       issueKey: {
@@ -86,7 +86,7 @@ export default Manifest({
   name: "Jira on Platform 2.0",
   description: "Create, Update, Find, and Close Jira Tickets all from Slack.",
   icon: "assets/icon.png",
-  functions: [FindIssue, CreateIssue],
+  functions: [FindIssueByID, CreateIssue],
   outgoingDomains: ["horeaporutiu.atlassian.net"],
   botScopes: ["commands", "chat:write", "chat:write.public", "channels:read", "users:read"],
 });

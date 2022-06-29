@@ -1,13 +1,12 @@
 import type { SlackFunctionHandler } from "deno-slack-sdk/types.ts";
 import { Blocks } from "../utils/get_blocks.ts";
-import { State } from "../utils/get_state.ts";
 import { User } from "../utils/get_user_info.ts";
 import { Channel } from "../utils/channel_utils.ts";
 import { Auth } from "../utils/get_auth.ts";
-import { FindIssue } from "../manifest.ts";
+import { FindIssueByID } from "../manifest.ts";
 const issueURL = "/rest/api/2/issue/"
 
-const find_issue: SlackFunctionHandler<typeof FindIssue.definition> = async (
+const find_issue_by_id: SlackFunctionHandler<typeof FindIssueByID.definition> = async (
   { inputs, env, token },
 ) => {
   try {
@@ -86,5 +85,5 @@ const find_issue: SlackFunctionHandler<typeof FindIssue.definition> = async (
   } 
 };
 
-export default find_issue;
+export default find_issue_by_id;
 

@@ -7,8 +7,43 @@ import { Auth } from "../utils/get_auth.ts";
 import { CreateIssue } from "../manifest.ts";
 const issueURL = "/rest/api/2/issue/"
 
-
-const create_issue: SlackFunctionHandler<typeof CreateIssue.definition> = async (
+  /** This function lets a user in Slack create an issue, bug, task, or improvement
+   * within an already existing Jira Cloud instance.
+   * @see https://api.slack.com/methods/users.info
+   * 
+   * Env variables required:
+   * 
+   * JIRA_PROJECT - This is the project in Jira. You must have an already created project
+   * in Jira to run this function.
+   * 
+   * Example: JIRA_PROJECT=TEST
+   * 
+   * JIRA_INSTANCE - This is your cloud instance URL. Set this in your .env file and 
+   * then run `source .env` to apply your env variable changes. 
+   * 
+   * JIRA_USERNAME - The username associated with your Jira Cloud instance.
+   * 
+   * Example = JIRA_USERNAME=rogerfederer@gmail.com
+   * 
+   * JIRA_API_KEY - The API key associated with your Jira Cloud instance. To learn how 
+   * to create one, see the URL below.
+   * @see https://developer.atlassian.com/server/jira/platform/jira-rest-api-examples/
+   * Example = JIRA_API_KEY=sPadwkkff2jEd*****CD04
+   *  
+   * Example: JIRA_INSTANCE=horeaporutiu.atlassian.net
+   * name: create_issue
+   * type: Run On Slack function used to create an issue in a Jira Cloud Instance.
+   * inputs: 
+   * 
+   * inputs.summary
+   * 
+   * inputs.description
+   * 
+   * inputs.issueType: 
+   * 
+   * inputs: userID. Needed to get display name from UserID.
+   */
+  const create_issue: SlackFunctionHandler<typeof CreateIssue.definition> = async (
   { inputs, env, token },
 ) => {
   try {
@@ -24,14 +59,14 @@ const create_issue: SlackFunctionHandler<typeof CreateIssue.definition> = async 
     let url = "https://" + instance + issueURL
     console.log(url)
     //build the requestBody with our inputs from the UI
-    let requestBody: any = {}
-    requestBody.fields.project.key = projectKey
-    requestBody.fields.description = inputs.description;
-    requestBody.fileds.issuetype.name = inputs.issueType;
-    //only add optional fields to request body if they were filled in in the UI
-    if (inputs.summary) {
-      requestBody.fields.summary = inputs.summary
-    } else {requestBody.fileds.summary = "N/A"}
+
+    // const person: Person = {
+    //   name: 'James',
+    //   address: {
+    //     country: 'Chile',
+    //     city: 'Santiago',
+    //   },
+    // };
 
     // basic structure of the body to send to create API call
     //   {
@@ -47,7 +82,24 @@ const create_issue: SlackFunctionHandler<typeof CreateIssue.definition> = async 
     //        }
     //    }
     // }
+    const requestBody: any = {
+      "fields": {
+        "project": 
+        {
+          "key": projectKey
+        },
+        "summary": "N/A",
+        "description": inputs.description,
+        "issuetype": {
+          "name": inputs.issueType
+        }
+      }
+    }
 
+    //only add optional fields to request body if they were filled in in the UI
+    if (inputs.summary) {
+      requestBody.fields.summary = inputs.summary
+    }
 
     // https://supportdesk423.atlassian.net/rest/api/2/issue/
     //API request to create a new incident in ServiceNow
@@ -55,7 +107,7 @@ const create_issue: SlackFunctionHandler<typeof CreateIssue.definition> = async 
       url,
       {
         method: "POST",
-        headers: {          
+        headers: {
           "Authorization": basicAuth,
           "Content-Type": "application/json",
         },
@@ -80,16 +132,14 @@ const create_issue: SlackFunctionHandler<typeof CreateIssue.definition> = async 
 
     console.log("issueType, ticketID, description, assignee, reporter, status, comments, link: ")
     console.log(issueType, ticketID, description, assignee, reporter, status, comments, link)
-  
+
     let block = new Blocks();
-    // const incident_number = createTicketResp.result.task_effective_number
-    // let incidentLink = "https://" + instance + ".service-now.com/nav_to.do?uri=task.do?sysparm_query=number=" + incident_number
 
     let incidentBlock: any[];
     incidentBlock = [];
     // //assign Block Kit blocks for a better UI experience, check if someone was assigned    
-      incidentBlock = block.getBlocks(header, ticketID, description,
-        status, comments, reporter, assignee, link, incidentBlock, issueType)
+    incidentBlock = block.getBlocks(header, ticketID, description,
+      status, comments, reporter, assignee, link, incidentBlock, issueType)
 
 
     //get channel name, and blocks to channel
@@ -110,7 +160,7 @@ const create_issue: SlackFunctionHandler<typeof CreateIssue.definition> = async 
     const msg = error instanceof Error ? error.message : "unknown";
     console.log(error);
     return { error: msg };
-  } 
+  }
 };
 
 export default create_issue;
