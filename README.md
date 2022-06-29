@@ -15,14 +15,10 @@ This project aims to speed up the time to understand & implement functions with 
 
 ## Step 2. Jira Cloud Configuration Via Environmental Variables
 
-First, we will learn Basic Auth since it is earlier. All we need is username and password. If you want to read how to use 
-OAuth 2.0 to get an access token to make your API requests, find the section at the bottom.
-
-* First, gather details from your ServiceNow developer account. First you must get a developer account here: https://developer.servicenow.com/dev.do
-
-* Then click on your Profile picture (top right), and select "Manage insance password."
-
-![now_credentials](https://media.slack-github.com/user/2212/files/899f8480-b0d8-11ec-8434-13044b9d4ae8)
+First, we will learn Basic Auth since it is easier to setup. All we need is your `JIRA_USERNAME` and
+ `JIRA_API_KEY`. We will need to set these environmental variables so that our Slack app can be connected 
+to the right 
+Jira Cloud account.
 
 * Your JIRA_USERNAME should be your email, unless you changed it. Mine is `helloworld@gmail.com`
 * Your JIRA_API_KEY will just be your api key that you created in Jira. If you haven't done so yet, check the [docs](https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/).
