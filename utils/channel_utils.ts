@@ -10,7 +10,6 @@ export class Channel {
     const client = SlackAPI(token, {});
 
     const resp = await client.apiCall("chat.postMessage", {
-      text: ``,
       channel: channel,
       blocks: incidentBlock,
     });
@@ -31,20 +30,21 @@ export class Channel {
 
     return channelInfo;
   }
+
+  //use chat.postMessage
+  async startAppDM(token: any, user:any) {
+    console.log('this function will start an app DM. The DM will be coming from the installed app.')
+
+    const client = SlackAPI(token, {});
+    console.log('user: ')
+    console.log(user)
+
+    const openDM = await client.apiCall("conversations.open", {
+      users:user
+    });
+    console.log('after conversations.open in startAppDM function')
+    console.log(openDM)
+    return openDM
+
+  }
 }
-
-    //TODO-channel-create-logic
-
-    // let today: any = new Date();
-    // let yyyy = today.getFullYear();
-    // let mm = today.getMonth() + 1; // Months start at 0!
-    // let dd = today.getDate();
-
-    // if (dd < 10) dd = '0' + dd;
-    // if (mm < 10) mm = '0' + mm;
-
-
-    // today =  + dd + '-' + mm + '-' + yyyy;
-    // console.log(today)
-
-    //#incd-220525-5193-webapp-doses-gates-again example slack channel name

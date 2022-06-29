@@ -64,6 +64,10 @@ export const CreateIssue = DefineFunction({
           value: "Epic",
         }],
       },
+      creator: {
+        type: Schema.slack.types.user_id,
+        description: "User who created the ticket",
+      },
       channel: {
         type: Schema.slack.types.channel_id,
         description: "Select channel to post the issue information in.",
@@ -88,6 +92,6 @@ export default Manifest({
   icon: "assets/icon.png",
   functions: [FindIssueByID, CreateIssue],
   outgoingDomains: ["horeaporutiu.atlassian.net"],
-  botScopes: ["commands", "chat:write", "chat:write.public", "channels:read", "users:read"],
+  botScopes: ["commands", "chat:write", "chat:write.public", "channels:read", "users:read", "im:write"],
 });
 

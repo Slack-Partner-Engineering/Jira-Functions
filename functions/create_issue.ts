@@ -1,6 +1,5 @@
 import type { SlackFunctionHandler } from "deno-slack-sdk/types.ts";
 import { Blocks } from "../utils/get_blocks.ts";
-import { State } from "../utils/get_state.ts";
 import { User } from "../utils/get_user_info.ts";
 import { Channel } from "../utils/channel_utils.ts";
 import { Auth } from "../utils/get_auth.ts";
@@ -53,35 +52,12 @@ const issueURL = "/rest/api/2/issue/"
     const basicAuth = await auth.getBasicAuth(env)
     // the channel to post incident info to
     const channel = inputs.channel
-    const header = "Issue Info :information_source:";
-    console.log('basicAuth: ')
-    console.log(basicAuth)
+    console.log(inputs)
+
     let url = "https://" + instance + issueURL
     console.log(url)
     //build the requestBody with our inputs from the UI
 
-    // const person: Person = {
-    //   name: 'James',
-    //   address: {
-    //     country: 'Chile',
-    //     city: 'Santiago',
-    //   },
-    // };
-
-    // basic structure of the body to send to create API call
-    //   {
-    //     "fields": {
-    //        "project":
-    //        {
-    //           "key": "TEST"
-    //        },
-    //        "summary": "REST ye merry gentlemen.",
-    //        "description": "Creating of an issue using project keys and issue type names using the REST API",
-    //        "issuetype": {
-    //           "name": "Bug"
-    //        }
-    //    }
-    // }
     const requestBody: any = {
       "fields": {
         "project": 
@@ -119,16 +95,17 @@ const issueURL = "/rest/api/2/issue/"
     console.log('createTicketResp:')
     console.log(createTicketResp)
     console.log('after create resp:')
+    const header = "New " + inputs.issueType + " Created :memo:";
 
     //set variables to surface to UI
-    const issueType = createTicketResp.fields.issuetype.name;
+    const issueType = inputs.issueType;
     const ticketID = createTicketResp.id;
-    const description = createTicketResp.fields.description;
-    const assignee = createTicketResp.fields.assignee;
-    const reporter = createTicketResp.fields.reporter.displayName;
-    const status = createTicketResp.fields.status.name;
-    const comments = createTicketResp.fields.comment.comments;
-    const link = "https://" + instance + "/browse/" + "idk"
+    const description = inputs.description;
+    const assignee = 'test';
+    const reporter = 'test';
+    const status = 'test';
+    const comments = 'test';
+    const link = "https://" + instance + "/browse/" + createTicketResp.key
 
     console.log("issueType, ticketID, description, assignee, reporter, status, comments, link: ")
     console.log(issueType, ticketID, description, assignee, reporter, status, comments, link)
@@ -147,7 +124,11 @@ const issueURL = "/rest/api/2/issue/"
     let channelInfo: any = await channelObj.getChannelInfo(token, channel)
     console.log('channelInfo: ')
     console.log(channelInfo)
-    await channelObj.postToChannel(token, channel, incidentBlock);
+    let DMInfo: any = await channelObj.startAppDM(token, inputs.creator)
+    let DMID = DMInfo.channel.id
+
+    await channelObj.postToChannel(token, DMID, incidentBlock);
+
 
     //output modal once the function finishes running
     return await {
