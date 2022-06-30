@@ -51,7 +51,7 @@ const issueURL = "/rest/api/2/issue/"
     const auth = new Auth()
     const basicAuth = await auth.getBasicAuth(env)
     // the channel to post incident info to
-    const channel = inputs.channel
+    // const channel = inputs.channel
     console.log(inputs)
 
     let url = "https://" + instance + issueURL
@@ -101,29 +101,34 @@ const issueURL = "/rest/api/2/issue/"
     const issueType = inputs.issueType;
     const ticketID = createTicketResp.id;
     const description = inputs.description;
-    const assignee = 'test';
-    const reporter = 'test';
-    const status = 'test';
+    const assignee = inputs.assigned_to;
+    const reporter = inputs.creator;
+    const status = inputs.status;
     const comments = 'test';
     const link = "https://" + instance + "/browse/" + createTicketResp.key
 
+    let user = new User();
+    let assigneeUser = await user.getUserName(token, assignee)
+    let reporterUser = await user.getUserName(token, reporter)
+    console.log(assigneeUser, reporterUser)
+
     console.log("issueType, ticketID, description, assignee, reporter, status, comments, link: ")
-    console.log(issueType, ticketID, description, assignee, reporter, status, comments, link)
+    console.log(issueType, ticketID, description, assigneeUser, reporterUser, status, comments, link)
 
     let block = new Blocks();
 
     let incidentBlock: any[];
     incidentBlock = [];
     // //assign Block Kit blocks for a better UI experience, check if someone was assigned    
-    incidentBlock = block.getBlocks(header, ticketID, description,
-      status, comments, reporter, assignee, link, incidentBlock, issueType)
+    incidentBlock = block.getNewIssueBlocks(header, ticketID, description,
+      status, comments, reporterUser, assigneeUser, link, incidentBlock, issueType)
 
 
     //get channel name, and blocks to channel
     let channelObj = new Channel()
-    let channelInfo: any = await channelObj.getChannelInfo(token, channel)
-    console.log('channelInfo: ')
-    console.log(channelInfo)
+    // let channelInfo: any = await channelObj.getChannelInfo(token, channel)
+    // console.log('channelInfo: ')
+    // console.log(channelInfo)
     let DMInfo: any = await channelObj.startAppDM(token, inputs.creator)
     let DMID = DMInfo.channel.id
 
@@ -133,8 +138,7 @@ const issueURL = "/rest/api/2/issue/"
     //output modal once the function finishes running
     return await {
       outputs: {
-        JiraResponse: "Please go to channel " + `#${channelInfo.name}` + " to view your newly created ticket: " +
-          `${createTicketResp.id}` + "."
+        JiraResponse: "You should see a DM from this app shortly."
       },
     };
   } catch (error) {

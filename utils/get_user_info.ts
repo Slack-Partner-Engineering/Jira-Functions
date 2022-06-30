@@ -10,7 +10,7 @@ export class User {
    * inputs: token. Needed to make API call
    * inputs: userID. Needed to get display name from UserID.
    */
-  async getUserInfo(token: any, userID: any) {
+  async getUserName(token: any, userID: any) {
     console.log('getUserInfo called in utils: ')
     console.log('userID: ')
     console.log(userID)
@@ -26,7 +26,7 @@ export class User {
 
     let user: any = await userInfoResp.user
 
-    return user;
+    return user.name;
   }
 
   /** This checks if a user is a Slack user

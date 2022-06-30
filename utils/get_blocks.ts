@@ -9,11 +9,11 @@ export class Blocks {
     console.log('comments')
     console.log(comments)
 
-    if (comments.length === 0) {
-      console.log('no comments')
-      comments = 'N/A'
-    } else {
+    if (comments.length > 0 ) {
       comments = comments[0].body
+    } else if (comments == undefined) {
+      console.log('comments are undefined')
+      comments = "N/A"
     }
     if (!assignedTo) {
       console.log('no assignedTo')
@@ -59,11 +59,11 @@ export class Blocks {
         "fields": [
           {
             "type": "mrkdwn",
-            "text": "*Reporter:*\n" + `${caller}`
+            "text": ":woman-raising-hand::skin-tone-4: *Reporter:*\n" + `@${caller}`
           },
           {
             "type": "mrkdwn",
-            "text": "*Assigned To:*\n" + `@${assignedTo}`
+            "text": ":man-raising-hand::skin-tone-2: *Assigned To:*\n" + `@${assignedTo}` 
           }
         ]
       },
@@ -77,4 +77,109 @@ export class Blocks {
 
     return blocks;
   }
+
+  getNewIssueBlocks(header: any, number: any, shortDescription: any, curState: any, comments: any, caller: any, assignedTo: any, incidentLink: any, blocks: any, type:any) {
+    console.log('getBlocks called in utils')
+
+    console.log(caller)
+    console.log('comments')
+    console.log(comments)
+
+    if (comments.length > 0 ) {
+      comments = comments[0].body
+    } else if (comments == undefined) {
+      console.log('comments are undefined')
+      comments = "N/A"
+    }
+    if (!assignedTo) {
+      console.log('no assignedTo')
+      assignedTo = 'N/A'
+    }
+
+    blocks.push({
+      "type": "header",
+      "text": {
+        "type": "plain_text",
+        "text": header,
+        "emoji": true
+      }
+    },
+      {
+        "type": "section",
+        "fields": [
+          {
+            "type": "mrkdwn",
+            "text": "*Issue ID:* " + "\n" + `${number}`,
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Short Description: *\n" + `${shortDescription}`
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "fields": [
+          {
+            "type": "mrkdwn",
+            "text": "*Status:*\n" + `${curState}`
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Type:*\n" + `${type}`
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "fields": [
+          {
+            "type": "mrkdwn",
+            "text": ":woman-raising-hand::skin-tone-4: *Reporter:*\n" + `@${caller}`
+          },
+          {
+            "type": "mrkdwn",
+            "text": ":man-raising-hand::skin-tone-2: *Assigned To:*\n" + `@${assignedTo}` 
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "<" + `${incidentLink}` + "|" + "View Issue" + ">"
+        }
+      });
+
+    return blocks;
+  }
+
+
+  getCommentBlocks(blocks: any, commentText: any, link: any, issueKey: any, curUser:any, comment:any) {
+
+    blocks.push({
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": `@${curUser}` + " commented on " + "<" + `${link}` + "|" + issueKey + "> \n" + ">" + comment,
+      }
+    });
+  
+    return blocks;
+  }
+
+  getIssueCreatedBlocks(blocks: any, commentText: any, link: any, issueKey: any, curUser:any, comment:any) {
+
+    blocks.push({
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": `@${curUser}` + " commented on " + "<" + `${link}` + "|" + issueKey + "> \n" + ">" + comment,
+      }
+    });
+  
+    return blocks;
+  }
+
+
 }
