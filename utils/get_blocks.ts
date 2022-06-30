@@ -168,6 +168,19 @@ export class Blocks {
     return blocks;
   }
 
+  getUpdateBlocks(blocks: any, issueType: any, link: any, issueKey: any, curUser:any, comment:any) {
+
+    blocks.push({
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": `@${curUser}` + " updated the 🐛" + issueType +  " " + "<" + `${link}` + "|" + issueKey + "> \n" + ">" + comment,
+      }
+    });
+  
+    return blocks;
+  }
+
   getIssueCreatedBlocks(blocks: any, commentText: any, link: any, issueKey: any, curUser:any, comment:any) {
 
     blocks.push({
