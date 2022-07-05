@@ -136,6 +136,22 @@ export const UpdateIssue = DefineFunction({
           value: "New Feature",
         }],
       },
+      assignee: {
+        type: Schema.types.string,
+        description:
+          "Who to assign the issue to.",
+        enum: ["557058:f9bcdb25-24a5-4501-927c-588b632c764e", "62c4acef9763a5e6026facf0", "62c4ac6db6357aecd7c6caff"],
+        choices: [{
+          title: "Horea Porutiu",
+          value: "557058:f9bcdb25-24a5-4501-927c-588b632c764e",
+        }, {
+          title: "Lauren Hooper",
+          value: "62c4acef9763a5e6026facf0",
+        }, {
+          title: "Test User",
+          value: "62c4ac6db6357aecd7c6caff",
+        }],
+      },
       status: {
         type: Schema.types.string,
         description:

@@ -36,6 +36,11 @@ const issueURL = "/rest/api/2/issue/"
     if (inputs.description) {
       requestBody.fields.description = inputs.description
     }
+    if (inputs.assignee) {
+      requestBody.fields.assignee = {
+        "accountId": inputs.assignee
+      }
+    }
     // if (inputs.issueType) {
     //   requestBody.fields.issueType = inputs.issueType
     // }
