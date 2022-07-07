@@ -169,12 +169,48 @@ export class Blocks {
   }
 
   getUpdateBlocks(blocks: any, issueType: any, link: any, issueKey: any, curUser:any, comment:any) {
+    let icon;
+    switch (issueType) {
+      case 'Bug':
+        console.log('inside Bug 1')
+        icon = "🐛";
+        break;
+      case 'Task':
+        console.log('inside task 2')
+        icon = "☑️";
+        break;
+      case 'Improvement':
+        console.log('inside improvement 3')
+        icon = "⬆️";
+        break;
+      case 'New Feature':
+        console.log('inside case 2')
+        icon = "➕";
+        break;  
+      default:
+        console.log('default case')
+        icon = "🐛"
+    }
 
     blocks.push({
       "type": "section",
       "text": {
         "type": "mrkdwn",
-        "text": `@${curUser}` + " updated the 🐛" + issueType +  " " + "<" + `${link}` + "|" + issueKey + "> \n" + ">" + comment,
+        "text": `@${curUser}` + " updated the " + icon + " " + issueType +  " " + "<" + `${link}` + "|" + issueKey + "> \n" + ">" + comment,
+      }
+    });
+  
+    return blocks;
+  }
+
+  getStatusBlocks(blocks: any, issueType: any, link: any, issueKey: any, curUser:any, prevStatus:any, curStatus:any) {
+
+    blocks.push({
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": `@${curUser}` + " updated "+  "<" + `${link}` + "|" + "the " + issueType + ": " + issueKey + ">"
+          + " from " + "`" + prevStatus + "`" + " " + "→ " + "`" + curStatus +  "`"
       }
     });
   

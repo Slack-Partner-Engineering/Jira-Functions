@@ -44,9 +44,9 @@ const issueURL = "/rest/api/2/issue/"
     // if (inputs.issueType) {
     //   requestBody.fields.issueType = inputs.issueType
     // }
-    // if (inputs.status) {
-    //   requestBody.fields.status = inputs.status
-    // }
+    if (inputs.status) {
+      requestBody.fields.status = inputs.status
+    }
 
     console.log('requestBody: ')
     console.log(requestBody)

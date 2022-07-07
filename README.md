@@ -29,7 +29,7 @@ For example, in the screenshot below, you can find my `JIRA_INSTANCE` in the bro
 
 [![Jira_Project](https://media.slack-github.com/user/2212/files/f2b57aeb-493f-4b56-b049-80095ede916a)](https://media.slack-github.com/user/2212/files/f2b57aeb-493f-4b56-b049-80095ede916a)
 
-> If you want to run this is local mode, you will need to copy the `sample.env` file, rename it to `.env`, add your env variables, and then run `source .env` to set your variables. 
+> If you want to run this in local mode, you will need to copy the `sample.env` file, rename it to `.env`, add your env variables, and then run `source .env` to set your variables. Next, run `hermes run` to run the app in local mode.
 
 Save all those to a clipboard, since you will need to set them as env variables.
 
