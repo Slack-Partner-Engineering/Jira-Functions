@@ -230,5 +230,53 @@ export class Blocks {
     return blocks;
   }
 
+  getFilterByAssigneeBlocks(blocks: any, numberOfIssues: any, assignee: any, issues: any, instance:any) {
+
+    blocks.push({
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "🔎 There are " + numberOfIssues + " issues  assigned to " + "* 🙋🏽‍♀️ " +  assignee + " 🙋🏻‍♂️*"
+          // `@${curUser}` + " updated the " + icon + " " + issueType +  " " + "<" + `${link}` + "|" + issueKey + "> \n" + ">" + comment,
+      }
+    });
+    
+    for (let i = 0; i < numberOfIssues; i++) {
+
+      let curIssue = issues[i]
+          //set variables to surface to UI
+      const issueType = curIssue.fields.issuetype.name;
+      const ticketID = curIssue.id;
+      const description = curIssue.fields.description;
+      const assignee = curIssue.fields.assignee.displayName;
+      const reporter = curIssue.fields.reporter.displayName;
+      const status = curIssue.fields.status.name;
+      const comments = '';
+      const link = "https://" + instance + "/browse/" + curIssue.key
+
+      console.log('assignee: ')
+      console.log(assignee)
+
+      console.log('reporter: ')
+      console.log(reporter)
+
+      blocks.push({
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "<" + `${link}` + "|" + curIssue.key + "> \n" + ">" + "Summary: " + "*" + description + "*" 
+          + "\n" + ">" + "Status: " + "*" + status + "*",
+        }
+      });
+
+      
+
+    }
+
+
+  
+    return blocks;
+  }
+
 
 }
