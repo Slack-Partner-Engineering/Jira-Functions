@@ -59,8 +59,7 @@ const issueURL = "/rest/api/2/issue/"
     let curUserName = await user.getUserName(token, inputs.creator)
     let block = new Blocks();
 
-    let incidentBlock: any[];
-    incidentBlock = [];
+    let incidentBlock: any = [];
 
     let commentText = "Someone commented on issue *" + inputs.issueKey + "*";
 

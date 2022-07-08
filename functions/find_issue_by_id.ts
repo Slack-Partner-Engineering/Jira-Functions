@@ -54,11 +54,9 @@ const find_issue_by_id: SlackFunctionHandler<typeof FindIssueByID.definition> = 
     console.log(issueType, ticketID, description, assignee, reporter, status, comments, link)
   
     let block = new Blocks();
-    // const incident_number = createTicketResp.result.task_effective_number
-    // let incidentLink = "https://" + instance + ".service-now.com/nav_to.do?uri=task.do?sysparm_query=number=" + incident_number
 
-    let incidentBlock: any[];
-    incidentBlock = [];
+    let incidentBlock: any = [];
+
     // //assign Block Kit blocks for a better UI experience, check if someone was assigned    
       incidentBlock = block.getBlocks(header, ticketID, description,
         status, comments, reporter, assignee, link, incidentBlock, issueType)

@@ -80,8 +80,7 @@ const issueURL = "/rest/api/2/issue/"
      let block = new Blocks();
      let comment = ''
  
-     let incidentBlock: any[];
-     incidentBlock = [];
+     let incidentBlock: any = [];
  
      let commentText = "Someone commented on issue *" + inputs.issueKey + "*";
  

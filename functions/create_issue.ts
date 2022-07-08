@@ -10,37 +10,10 @@ const issueURL = "/rest/api/2/issue/"
    * within an already existing Jira Cloud instance.
    * @see https://api.slack.com/methods/users.info
    * 
-   * Env variables required:
+   * Env variables required
+   * @see https://slack-github.com/hporutiu/Jira-Functions#step-2-jira-cloud-configuration-via-environmental-variables
    * 
-   * JIRA_PROJECT - This is the project in Jira. You must have an already created project
-   * in Jira to run this function.
-   * 
-   * Example: JIRA_PROJECT=TEST
-   * 
-   * JIRA_INSTANCE - This is your cloud instance URL. Set this in your .env file and 
-   * then run `source .env` to apply your env variable changes. 
-   * 
-   * JIRA_USERNAME - The username associated with your Jira Cloud instance.
-   * 
-   * Example = JIRA_USERNAME=rogerfederer@gmail.com
-   * 
-   * JIRA_API_KEY - The API key associated with your Jira Cloud instance. To learn how 
-   * to create one, see the URL below.
    * @see https://developer.atlassian.com/server/jira/platform/jira-rest-api-examples/
-   * Example = JIRA_API_KEY=sPadwkkff2jEd*****CD04
-   *  
-   * Example: JIRA_INSTANCE=horeaporutiu.atlassian.net
-   * name: create_issue
-   * type: Run On Slack function used to create an issue in a Jira Cloud Instance.
-   * inputs: 
-   * 
-   * inputs.summary
-   * 
-   * inputs.description
-   * 
-   * inputs.issueType: 
-   * 
-   * inputs: userID. Needed to get display name from UserID.
    */
   const create_issue: SlackFunctionHandler<typeof CreateIssue.definition> = async (
   { inputs, env, token },
@@ -77,8 +50,6 @@ const issueURL = "/rest/api/2/issue/"
       requestBody.fields.summary = inputs.summary
     }
 
-    // https://supportdesk423.atlassian.net/rest/api/2/issue/
-    //API request to create a new incident in ServiceNow
     const createTicketResp: any = await fetch(
       url,
       {
@@ -117,8 +88,8 @@ const issueURL = "/rest/api/2/issue/"
 
     let block = new Blocks();
 
-    let incidentBlock: any[];
-    incidentBlock = [];
+    let incidentBlock: any = [];
+
     // //assign Block Kit blocks for a better UI experience, check if someone was assigned    
     incidentBlock = block.getNewIssueBlocks(header, ticketID, description,
       status, comments, reporterUser, assigneeUser, link, incidentBlock, issueType)
@@ -126,14 +97,10 @@ const issueURL = "/rest/api/2/issue/"
 
     //get channel name, and blocks to channel
     let channelObj = new Channel()
-    // let channelInfo: any = await channelObj.getChannelInfo(token, channel)
-    // console.log('channelInfo: ')
-    // console.log(channelInfo)
     let DMInfo: any = await channelObj.startAppDM(token, inputs.creator)
     let DMID = DMInfo.channel.id
 
     await channelObj.postToChannel(token, DMID, incidentBlock);
-
 
     //output modal once the function finishes running
     return await {

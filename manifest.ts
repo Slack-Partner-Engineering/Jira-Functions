@@ -29,6 +29,42 @@ export const FindIssueByID = DefineFunction({
   },
 });
 
+export const FindIssueByAssignee = DefineFunction({
+  callback_id: "find_issue_by_assignee",
+  title: "Find an Issue by Assignee",
+  description: "Find issues which are assigned to a certain person right from Slack.",
+  source_file: "functions/find_issue_by_assignee.ts",
+  input_parameters: {
+    properties: {
+      assignee: {
+        type: Schema.types.string,
+        description:
+          "Get issues assigned to which user?",
+        enum: ["Horea Porutiu", "Lauren Hooper", "Test"],
+        choices: [{
+          title: "Horea Porutiu",
+          value: "Horea Porutiu",
+        }, {
+          title: "Lauren Hooper",
+          value: "Lauren Hooper",
+        }, {
+          title: "Test User",
+          value: "Test",
+        }],
+      },
+      searcher: {
+        type: Schema.slack.types.user_id,
+        description: "User who is searching for these issues.",
+      }
+    },
+    required: ["assignee", "searcher"],
+  },
+  output_parameters: {
+    properties: {},
+    required: [],
+  },
+});
+
 export const CreateIssue = DefineFunction({
   callback_id: "create_issue",
   title: "Create an Issue",
@@ -68,7 +104,7 @@ export const CreateIssue = DefineFunction({
         default: "To Do",
         enum: ["To Do", "In Progress", "In Review", "Done"],
         choices: [{
-          title: "To Do",
+           title: "To Do",
           value: "To Do",
         }, {
           title: "In Progress",
@@ -263,7 +299,7 @@ export default Manifest({
   name: "Jira on Platform 2.0",
   description: "Create, Update, Find, and Close Jira Tickets all from Slack.",
   icon: "assets/icon.png",
-  functions: [FindIssueByID, CreateIssue, AddComment, UpdateIssue, UpdateStatus],
+  functions: [FindIssueByID, FindIssueByAssignee, CreateIssue, AddComment, UpdateIssue, UpdateStatus],
   outgoingDomains: ["horeaporutiu.atlassian.net"],
   botScopes: ["commands", "chat:write", "chat:write.public", "channels:read", "users:read", "im:write"],
 });

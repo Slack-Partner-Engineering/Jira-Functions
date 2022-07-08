@@ -87,8 +87,7 @@ const update_status: SlackFunctionHandler<typeof UpdateStatus.definition> = asyn
     let curUserName = await user.getUserName(token, updator)
     let block = new Blocks();
 
-    let incidentBlock: any[];
-    incidentBlock = [];
+    let incidentBlock: any = [];
 
     let commentText = "Someone updated the status on issue *" + inputs.issueKey + "*";
     let curStatus;
