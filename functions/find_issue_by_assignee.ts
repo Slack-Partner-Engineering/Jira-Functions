@@ -4,6 +4,8 @@ import { Channel } from "../utils/channel_utils.ts";
 import { Auth } from "../utils/get_auth.ts";
 import { FindIssueByAssignee } from "../manifest.ts";
 const searchURL = "/rest/api/2/search/?jql=assignee='"
+import { SlackAPI } from 'deno-slack-api/mod.ts';
+
 
 const find_issue_by_assignee: SlackFunctionHandler<typeof FindIssueByAssignee.definition> = async (
   { inputs, env, token },
@@ -52,6 +54,20 @@ const find_issue_by_assignee: SlackFunctionHandler<typeof FindIssueByAssignee.de
     let DMID = DMInfo.channel.id
 
     await channelObj.postToChannel(token, DMID, incidentBlock);
+    const client = SlackAPI(token, {});
+
+    await client.views.publish({
+      token: token,
+      user_id: "U0368LRBZ44",
+      view: {
+        "type": "home",
+        "blocks": incidentBlock
+    },
+    })
+
+    console.log('after views publish')
+
+   
 
     //output modal once the function finishes running
     return { outputs: {} };

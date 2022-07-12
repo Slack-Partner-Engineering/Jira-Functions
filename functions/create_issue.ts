@@ -4,6 +4,8 @@ import { User } from "../utils/get_user_info.ts";
 import { Channel } from "../utils/channel_utils.ts";
 import { Auth } from "../utils/get_auth.ts";
 import { CreateIssue } from "../manifest.ts";
+import { SlackAPI } from 'deno-slack-api/mod.ts';
+
 const issueURL = "/rest/api/2/issue/"
 
   /** This function lets a user in Slack create an issue, bug, task, or improvement
@@ -26,6 +28,9 @@ const issueURL = "/rest/api/2/issue/"
     // the channel to post incident info to
     // const channel = inputs.channel
     console.log(inputs)
+    const client = SlackAPI(token, {});
+
+    client.views.publish()
 
     let url = "https://" + instance + issueURL
     console.log(url)
@@ -101,6 +106,8 @@ const issueURL = "/rest/api/2/issue/"
     let DMID = DMInfo.channel.id
 
     await channelObj.postToChannel(token, DMID, incidentBlock);
+
+
 
     //output modal once the function finishes running
     return await {
