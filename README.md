@@ -65,6 +65,9 @@ $ hermes deploy
 
 [![CreateUpdate](https://media.slack-github.com/user/2212/files/f2b57aeb-493f-4b56-b049-80095ede916a)](https://media.slack-github.com/user/2212/files/fcbc08be-1cf1-4365-9126-e6d4ff5b311a)
 
+[![updateStatusFilterAssignee](https://media.slack-github.com/user/2212/files/f2b57aeb-493f-4b56-b049-80095ede916a)](https://media.slack-github.com/user/2212/files/2c9f87af-e239-4e5d-b5d6-ea7c64eb88d3)
+
+
 
 
 
