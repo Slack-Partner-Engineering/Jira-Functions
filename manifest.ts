@@ -11,21 +11,16 @@ export const FindIssueByID = DefineFunction({
         type: Schema.types.string,
         description: "Key of the issue to look for",
       },
-      channel: {
-        type: Schema.slack.types.channel_id,
-        description: "Select channel to post the issue information in.",
-      },
+      searcher: {
+        type: Schema.slack.types.user_id,
+        description: "User who is searching for the issue.",
+      }
     },
-    required: ["channel"],
+    required: ["issueKey", "searcher"],
   },
   output_parameters: {
-    properties: {
-      JiraResponse: {
-        type: Schema.types.string,
-        description: "The API response from Jira",
-      },
-    },
-    required: ["JiraResponse"],
+    properties: {},
+    required: [],
   },
 });
 
@@ -296,7 +291,7 @@ export const UpdateStatus = DefineFunction({
 });
 
 export default Manifest({
-  name: "Jira on Platform 2.0",
+  name: "Jira Functions Deployed",
   description: "Create, Update, Find, and Close Jira Tickets all from Slack.",
   icon: "assets/icon.png",
   functions: [FindIssueByID, FindIssueByAssignee, CreateIssue, AddComment, UpdateIssue, UpdateStatus],

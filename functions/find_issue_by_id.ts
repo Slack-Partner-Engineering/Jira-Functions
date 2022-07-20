@@ -14,15 +14,13 @@ const find_issue_by_id: SlackFunctionHandler<typeof FindIssueByID.definition> = 
     const auth = new Auth()
     const basicAuth = await auth.getBasicAuth(env)
     // the channel to post incident info to
-    const channel = inputs.channel
     const header = "Issue Info :information_source:";
     console.log('basicAuth: ')
     console.log(basicAuth)
     let url = "https://" + instance + issueURL + inputs.issueKey
     console.log(url)
 
-
-    // https://supportdesk423.atlassian.net/rest/api/2/issue/
+    // https://<instancename>.atlassian.net/rest/api/2/issue/
     //API request to create a new incident in ServiceNow
     const getTicketResp: any = await fetch(
       url,
@@ -61,21 +59,15 @@ const find_issue_by_id: SlackFunctionHandler<typeof FindIssueByID.definition> = 
       incidentBlock = block.getBlocks(header, ticketID, description,
         status, comments, reporter, assignee, link, incidentBlock, issueType)
 
-
     //get channel name, and blocks to channel
     let channelObj = new Channel()
-    let channelInfo: any = await channelObj.getChannelInfo(token, channel)
-    console.log('channelInfo: ')
-    console.log(channelInfo)
-    await channelObj.postToChannel(token, channel, incidentBlock);
+    let DMInfo: any = await channelObj.startAppDM(token, inputs.searcher)
+    let DMID = DMInfo.channel.id
+
+    await channelObj.postToChannel(token, DMID, incidentBlock);
 
     //output modal once the function finishes running
-    return await {
-      outputs: {
-        JiraResponse: "Please go to channel " + `#${channelInfo.name}` + " to view your newly created ticket: " +
-          `${getTicketResp.id}` + "."
-      },
-    };
+    return { outputs: {} };
   } catch (error) {
     const msg = error instanceof Error ? error.message : "unknown";
     console.log(error);
