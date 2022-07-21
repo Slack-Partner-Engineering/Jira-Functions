@@ -67,9 +67,6 @@ const find_issue_by_assignee: SlackFunctionHandler<typeof FindIssueByAssignee.de
 
     console.log('after views publish')
 
-   
-
-    //output modal once the function finishes running
     return { outputs: {} };
   } catch (error) {
     const msg = error instanceof Error ? error.message : "unknown";

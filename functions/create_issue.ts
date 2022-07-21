@@ -68,37 +68,66 @@ const issueURL = "/rest/api/2/issue/"
     )
       .then((createTicketResp) => createTicketResp.json())
 
+      let getInfoUrl = url + createTicketResp.key
+
+    const getIssueInfo: any = await fetch(
+      getInfoUrl,
+      {
+        method: "GET",
+        headers: {
+          "Authorization": basicAuth,
+          "Content-Type": "application/json",
+        },
+      },
+    )
+      .then((getIssueInfo) => getIssueInfo.json())
+
     console.log('createTicketResp:')
     console.log(createTicketResp)
     console.log('after create resp:')
     const header = "New " + inputs.issueType + " Created :memo:";
+    console.log('getIssueInfo:')
+    console.log(getIssueInfo)
 
     //set variables to surface to UI
     const issueType = inputs.issueType;
     const ticketID = createTicketResp.id;
+    const ticketKey = createTicketResp.key;
     const description = inputs.description;
-    const assignee = inputs.assigned_to;
-    const reporter = inputs.creator;
-    const status = inputs.status;
+    const summary = getIssueInfo.fields.summary;
+    let assignee = getIssueInfo.fields.assignee;
+    if (assignee == null) {
+      assignee = 'Unassigned'
+    }
+    const status = await getIssueInfo.fields.status.name;
+    console.log('status: ')
+    console.log(status)
+    const priority = getIssueInfo.fields.priority.name;
     const comments = 'test';
     const link = "https://" + instance + "/browse/" + createTicketResp.key
-
+    let assigneeUsername, creatorUsername;
     let user = new User();
-    let assigneeUser = await user.getUserName(token, assignee)
-    let reporterUser = await user.getUserName(token, reporter)
-    console.log(assigneeUser, reporterUser)
+    if (assignee != 'Unassigned') {
+      assigneeUsername = await user.getUserName(token, assignee)
+    } else assigneeUsername = assignee
 
-    console.log("issueType, ticketID, description, assignee, reporter, status, comments, link: ")
-    console.log(issueType, ticketID, description, assigneeUser, reporterUser, status, comments, link)
+    if (inputs.creator != null) {
+      creatorUsername = await user.getUserName(token, inputs.creator)
+    }
+
+    console.log("issueType, ticketID, summary, assignee, priority, status, comments, link: ")
+    console.log(issueType, ticketID, summary, assigneeUsername, priority, status, comments, link)
 
     let block = new Blocks();
 
     let incidentBlock: any = [];
 
     // //assign Block Kit blocks for a better UI experience, check if someone was assigned    
-    incidentBlock = block.getNewIssueBlocks(header, ticketID, description,
-      status, comments, reporterUser, assigneeUser, link, incidentBlock, issueType)
+    incidentBlock = await block.getNewIssueBlocks(header, ticketKey, summary,
+      status, comments, creatorUsername, assigneeUsername, link, incidentBlock, issueType, priority)
 
+      console.log('incidentBlock')
+      console.log(incidentBlock)
 
     //get channel name, and blocks to channel
     let channelObj = new Channel()

@@ -78,79 +78,59 @@ export class Blocks {
     return blocks;
   }
 
-  getNewIssueBlocks(header: any, number: any, shortDescription: any, curState: any, comments: any, caller: any, assignedTo: any, incidentLink: any, blocks: any, type:any) {
+  async getNewIssueBlocks(header: any, ticketKey: any, summary: any, status: any, comments: any,
+    creatorUsername:any, assignee: any, incidentLink: any, blocks: any, issueType:any, priority:any) {
     console.log('getBlocks called in utils')
 
-    console.log(caller)
     console.log('comments')
     console.log(comments)
 
+    console.log('status')
+    console.log(status)
     if (comments.length > 0 ) {
       comments = comments[0].body
     } else if (comments == undefined) {
       console.log('comments are undefined')
       comments = "N/A"
     }
-    if (!assignedTo) {
-      console.log('no assignedTo')
-      assignedTo = 'N/A'
+
+    let icon;
+    switch (issueType) {
+      case 'Bug':
+        console.log('inside Bug 1')
+        icon = "🐛";
+        break;
+      case 'Task':
+        console.log('inside task 2')
+        icon = "☑️";
+        break;
+      case 'Improvement':
+        console.log('inside improvement 3')
+        icon = "📈";
+        break;
+      case 'New Feature':
+        console.log('inside case 2')
+        icon = "➕";
+        break;  
+      default:
+        console.log('default case')
+        icon = "🐛"
     }
 
-    blocks.push({
-      "type": "header",
-      "text": {
-        "type": "plain_text",
-        "text": header,
-        "emoji": true
-      }
-    },
+    await blocks.push(
       {
         "type": "section",
         "fields": [
           {
             "type": "mrkdwn",
-            "text": "*Issue ID:* " + "\n" + `${number}`,
-          },
-          {
-            "type": "mrkdwn",
-            "text": "*Short Description: *\n" + `${shortDescription}`
+            "text": `@${creatorUsername}` + " " + "*created a*" + " " + `*${issueType}*` +
+            " using Jira ✨" + "\n" +
+            "<" + `${incidentLink}` + "|" + `${ticketKey}` + " " + `${summary}` + ">" + "\n" +
+            "Status: " + `*${status}* ` + `${icon}` + " Type: " + `*${issueType}*` + "\n" +
+            " 🙋🏽‍♀️ Assignee: " + `*${assignee}*` +" ⬆️ Priority: " + `*${priority}*` 
           }
         ]
-      },
-      {
-        "type": "section",
-        "fields": [
-          {
-            "type": "mrkdwn",
-            "text": "*Status:*\n" + `${curState}`
-          },
-          {
-            "type": "mrkdwn",
-            "text": "*Type:*\n" + `${type}`
-          }
-        ]
-      },
-      {
-        "type": "section",
-        "fields": [
-          {
-            "type": "mrkdwn",
-            "text": ":woman-raising-hand::skin-tone-4: *Reporter:*\n" + `@${caller}`
-          },
-          {
-            "type": "mrkdwn",
-            "text": ":man-raising-hand::skin-tone-2: *Assigned To:*\n" + `@${assignedTo}` 
-          }
-        ]
-      },
-      {
-        "type": "section",
-        "text": {
-          "type": "mrkdwn",
-          "text": "<" + `${incidentLink}` + "|" + "View Issue" + ">"
-        }
-      });
-
+      })
     return blocks;
   }
 
