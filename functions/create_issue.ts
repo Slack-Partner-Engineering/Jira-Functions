@@ -5,6 +5,7 @@ import { Channel } from "../utils/channel_utils.ts";
 import { Auth } from "../utils/get_auth.ts";
 import { CreateIssue } from "../manifest.ts";
 import { SlackAPI } from 'deno-slack-api/mod.ts';
+// import { BlockActionsRouter } from "deno-slack-sdk/mod.ts";
 
 const issueURL = "/rest/api/2/issue/"
 
@@ -135,15 +136,8 @@ const issueURL = "/rest/api/2/issue/"
     let DMID = DMInfo.channel.id
 
     await channelObj.postToChannel(token, DMID, incidentBlock);
+    return { outputs: {} };
 
-
-
-    //output modal once the function finishes running
-    return await {
-      outputs: {
-        JiraResponse: "You should see a DM from this app shortly."
-      },
-    };
   } catch (error) {
     const msg = error instanceof Error ? error.message : "unknown";
     console.log(error);

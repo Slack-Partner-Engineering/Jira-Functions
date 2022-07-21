@@ -2,14 +2,14 @@ export class Blocks {
 
   //builds the blocks to post to a channel. This is what the end user will see in Slack.
 
-  getBlocks(header: any, number: any, shortDescription: any, curState: any, comments: any, caller: any, assignedTo: any, incidentLink: any, blocks: any, type:any) {
+  getBlocks(header: any, number: any, shortDescription: any, curState: any, comments: any, caller: any, assignedTo: any, incidentLink: any, blocks: any, type: any) {
     console.log('getBlocks called in utils')
 
     console.log(caller)
     console.log('comments')
     console.log(comments)
 
-    if (comments.length > 0 ) {
+    if (comments.length > 0) {
       comments = comments[0].body
     } else if (comments == undefined) {
       console.log('comments are undefined')
@@ -33,7 +33,7 @@ export class Blocks {
         "fields": [
           {
             "type": "mrkdwn",
-            "text": "*Issue ID:* " + `${number}`+ "\n" + "*Type*: " + `${type}`
+            "text": "*Issue ID:* " + `${number}` + "\n" + "*Type*: " + `${type}`
           },
           {
             "type": "mrkdwn",
@@ -63,7 +63,7 @@ export class Blocks {
           },
           {
             "type": "mrkdwn",
-            "text": ":man-raising-hand::skin-tone-2: *Assigned To:*\n" + `@${assignedTo}` 
+            "text": ":man-raising-hand::skin-tone-2: *Assigned To:*\n" + `@${assignedTo}`
           }
         ]
       },
@@ -79,7 +79,7 @@ export class Blocks {
   }
 
   async getNewIssueBlocks(header: any, ticketKey: any, summary: any, status: any, comments: any,
-    creatorUsername:any, assignee: any, incidentLink: any, blocks: any, issueType:any, priority:any) {
+    creatorUsername: any, assignee: any, incidentLink: any, blocks: any, issueType: any, priority: any) {
     console.log('getBlocks called in utils')
 
     console.log('comments')
@@ -87,7 +87,7 @@ export class Blocks {
 
     console.log('status')
     console.log(status)
-    if (comments.length > 0 ) {
+    if (comments.length > 0) {
       comments = comments[0].body
     } else if (comments == undefined) {
       console.log('comments are undefined')
@@ -111,7 +111,7 @@ export class Blocks {
       case 'New Feature':
         console.log('inside case 2')
         icon = "➕";
-        break;  
+        break;
       default:
         console.log('default case')
         icon = "🐛"
@@ -120,22 +120,42 @@ export class Blocks {
     await blocks.push(
       {
         "type": "section",
-        "fields": [
+        "text":
+        {
+          "type": "mrkdwn",
+          "text": `@${creatorUsername}` + " " + "*created a*" + " " + `*${issueType}*` + " using Jira ✨ " + "<" + `${incidentLink}` + "|" + `${ticketKey}` + " " + `${summary}` + ">"
+            // "Status: " + `*${status}* ` + `${icon}` + " Type: " + `*${issueType}*` + "\n" +
+            // " 🙋🏽‍♀️ Assignee: " + `*${assignee}*` + " ⬆️ Priority: " + `*${priority}*`
+        }
+      },
+      {
+        "type": "context",
+        "elements": [
           {
-            "type": "mrkdwn",
-            "text": `@${creatorUsername}` + " " + "*created a*" + " " + `*${issueType}*` +
-            " using Jira ✨" + "\n" +
-            "<" + `${incidentLink}` + "|" + `${ticketKey}` + " " + `${summary}` + ">" + "\n" +
-            "Status: " + `*${status}* ` + `${icon}` + " Type: " + `*${issueType}*` + "\n" +
-            " 🙋🏽‍♀️ Assignee: " + `*${assignee}*` +" ⬆️ Priority: " + `*${priority}*` 
+            "text": "Status: " + `*${status}* `,
+            "type": "mrkdwn"
+          },
+          {
+            "text": `${icon}` + " Type: " + `*${issueType}*`,
+            "type": "mrkdwn"
+          },
+          {
+            "text": " 🙋🏽‍♀️ Assignee: " + `*${assignee}*`,
+            "type": "mrkdwn"
+          },
+          {
+            "text": " ⬆️ Priority: " + `*${priority}*`,
+            "type": "mrkdwn"
           }
         ]
-      })
+      },
+      
+      )
     return blocks;
   }
 
 
-  getCommentBlocks(blocks: any, commentText: any, link: any, issueKey: any, curUser:any, comment:any) {
+  getCommentBlocks(blocks: any, commentText: any, link: any, issueKey: any, curUser: any, comment: any) {
 
     blocks.push({
       "type": "section",
@@ -144,11 +164,11 @@ export class Blocks {
         "text": `@${curUser}` + " commented on " + "<" + `${link}` + "|" + issueKey + "> \n" + ">" + comment,
       }
     });
-  
+
     return blocks;
   }
 
-  getUpdateBlocks(blocks: any, issueType: any, link: any, issueKey: any, curUser:any, comment:any) {
+  getUpdateBlocks(blocks: any, issueType: any, link: any, issueKey: any, curUser: any, comment: any) {
     let icon;
     switch (issueType) {
       case 'Bug':
@@ -166,7 +186,7 @@ export class Blocks {
       case 'New Feature':
         console.log('inside case 2')
         icon = "➕";
-        break;  
+        break;
       default:
         console.log('default case')
         icon = "🐛"
@@ -176,28 +196,28 @@ export class Blocks {
       "type": "section",
       "text": {
         "type": "mrkdwn",
-        "text": `@${curUser}` + " updated the " + icon + " " + issueType +  " " + "<" + `${link}` + "|" + issueKey + "> \n" + ">" + comment,
+        "text": `@${curUser}` + " updated the " + icon + " " + issueType + " " + "<" + `${link}` + "|" + issueKey + "> \n" + ">" + comment,
       }
     });
-  
+
     return blocks;
   }
 
-  getStatusBlocks(blocks: any, issueType: any, link: any, issueKey: any, curUser:any, prevStatus:any, curStatus:any) {
+  getStatusBlocks(blocks: any, issueType: any, link: any, issueKey: any, curUser: any, prevStatus: any, curStatus: any) {
 
     blocks.push({
       "type": "section",
       "text": {
         "type": "mrkdwn",
-        "text": `@${curUser}` + " updated "+  "<" + `${link}` + "|" + "the " + issueType + ": " + issueKey + ">"
-          + " from " + "`" + prevStatus + "`" + " " + "→ " + "`" + curStatus +  "`"
+        "text": `@${curUser}` + " updated " + "<" + `${link}` + "|" + "the " + issueType + ": " + issueKey + ">"
+          + " from " + "`" + prevStatus + "`" + " " + "→ " + "`" + curStatus + "`"
       }
     });
-  
+
     return blocks;
   }
 
-  getIssueCreatedBlocks(blocks: any, commentText: any, link: any, issueKey: any, curUser:any, comment:any) {
+  getIssueCreatedBlocks(blocks: any, commentText: any, link: any, issueKey: any, curUser: any, comment: any) {
 
     blocks.push({
       "type": "section",
@@ -206,25 +226,25 @@ export class Blocks {
         "text": `@${curUser}` + " commented on " + "<" + `${link}` + "|" + issueKey + "> \n" + ">" + comment,
       }
     });
-  
+
     return blocks;
   }
 
-  getFilterByAssigneeBlocks(blocks: any, numberOfIssues: any, assignee: any, issues: any, instance:any) {
+  getFilterByAssigneeBlocks(blocks: any, numberOfIssues: any, assignee: any, issues: any, instance: any) {
 
     blocks.push({
       "type": "section",
       "text": {
         "type": "mrkdwn",
-        "text": "🔎 There are " + numberOfIssues + " issues  assigned to " + "* 🙋🏽‍♀️ " +  assignee + " 🙋🏻‍♂️*"
-          // `@${curUser}` + " updated the " + icon + " " + issueType +  " " + "<" + `${link}` + "|" + issueKey + "> \n" + ">" + comment,
+        "text": "🔎 There are " + numberOfIssues + " issues  assigned to " + "* 🙋🏽‍♀️ " + assignee + " 🙋🏻‍♂️*"
+        // `@${curUser}` + " updated the " + icon + " " + issueType +  " " + "<" + `${link}` + "|" + issueKey + "> \n" + ">" + comment,
       }
     });
-    
+
     for (let i = 0; i < numberOfIssues; i++) {
 
       let curIssue = issues[i]
-          //set variables to surface to UI
+      //set variables to surface to UI
       const issueType = curIssue.fields.issuetype.name;
       const ticketID = curIssue.id;
       const description = curIssue.fields.description;
@@ -244,17 +264,17 @@ export class Blocks {
         "type": "section",
         "text": {
           "type": "mrkdwn",
-          "text": "<" + `${link}` + "|" + curIssue.key + "> \n" + ">" + "Summary: " + "*" + description + "*" 
-          + "\n" + ">" + "Status: " + "*" + status + "*",
+          "text": "<" + `${link}` + "|" + curIssue.key + "> \n" + ">" + "Summary: " + "*" + description + "*"
+            + "\n" + ">" + "Status: " + "*" + status + "*",
         }
       });
 
-      
+
 
     }
 
 
-  
+
     return blocks;
   }
 
