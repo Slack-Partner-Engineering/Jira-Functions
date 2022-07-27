@@ -137,7 +137,58 @@ export class Blocks {
           }
         ]
       },
-      
+      {
+        "type": "actions",
+        "block_id": "jira_issue_block",
+        "elements": [
+          {
+            "type": "button",
+            "action_id": "transition_issue",
+            "text": {
+              "type": "plain_text",
+              "text": "Transition",
+              "emoji": true
+            },
+            "value": "Transition"
+          },
+          {
+            "type": "static_select",
+            "action_id": "jira_more_actions",
+            "placeholder": {
+              "type": "plain_text",
+              "text": "More actions...",
+              "emoji": true
+            },
+            "options": [
+              {
+
+                "text": {
+                  "type": "plain_text",
+                  "text": "Comment",
+                  "emoji": true
+                },
+                "value": "comment"
+              },
+              {
+                "text": {
+                  "type": "plain_text",
+                  "text": "Assign",
+                  "emoji": true
+                },
+                "value": "assign"
+              },
+              {
+                "text": {
+                  "type": "plain_text",
+                  "text": "Transition",
+                  "emoji": true
+                },
+                "value": "transition"
+              },
+            ]
+          }
+        ]
+      },
       )
     return blocks;
   }
