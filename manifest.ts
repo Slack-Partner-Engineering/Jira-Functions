@@ -1,4 +1,4 @@
-import { DefineFunction, Manifest, Schema } from "deno-slack-sdk/mod.ts";
+import { DefineFunction, Manifest, Schema, DefineWorkflow } from "deno-slack-sdk/mod.ts";
 
 export const FindIssueByID = DefineFunction({
   callback_id: "find_issue_by_id",
@@ -290,6 +290,76 @@ export const UpdateStatus = DefineFunction({
   },
 });
 
+// At present, this implementation requires the "hermes_workflow_tokens" toggle.
+const TransitionIssueWF = DefineWorkflow({
+  callback_id: "transition_issue_wf",
+  title: "Transition an Issue",
+  description: "Transition",
+  input_parameters: {
+    properties: {
+      updator: {
+        type: Schema.slack.types.user_id,
+      },
+      interactivity_context: {
+        type: "slack#/types/interactivity",
+        description: "Interactivity context",
+      },
+    },
+    required: ["updator"],
+  },
+});
+
+const TransitionIssueWFStep1 = TransitionIssueWF
+  .addStep(
+    "slack#/functions/send_form",
+    {
+      title: "Transition an Issue",
+      submit_label: "Transition",
+      interactivity: TransitionIssueWF.inputs.interactivity_context,
+      description: "Transition the status of an issue",
+      fields: {
+        elements: [
+          {
+            name: "issueKey",
+            title: "issueKey",
+            type: Schema.types.string,
+            description: "The key of the issue to update",
+          },
+          {
+            name: "status",
+            title: "Status",
+            type: Schema.types.string,
+            enum: ["11", "21", "31", "41"],
+            choices: [{
+              title: "To Do",
+              value: "11",
+            }, {
+              title: "In Progress",
+              value: "21",
+            }, {
+              title: "In Review",
+              value: "31",
+            },
+            {
+              title: "Done",
+              value: "41",
+            }],
+            description: "The new status of the issue",
+          },
+        ],
+        required: ["status", "issueKey"],
+      },
+    },
+  );
+
+  const TransitionIssueWFStep2 = TransitionIssueWF
+  .addStep(UpdateStatus, {
+    updator: TransitionIssueWF.inputs.updator,
+    status: TransitionIssueWFStep1.outputs.fields.status,
+    issueKey:
+    TransitionIssueWFStep1.outputs.fields.issueKey,
+  });
+
 export default Manifest({
   name: "Jira Functions Deployed",
   description: "Create, Update, Find, and Close Jira Tickets all from Slack.",
@@ -297,5 +367,6 @@ export default Manifest({
   functions: [FindIssueByID, FindIssueByAssignee, CreateIssue, AddComment, UpdateIssue, UpdateStatus],
   outgoingDomains: ["horeaporutiu.atlassian.net"],
   botScopes: ["commands", "chat:write", "chat:write.public", "channels:read", "users:read", "im:write"],
+  workflows: [TransitionIssueWF],
 });
 

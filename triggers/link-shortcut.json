@@ -1,0 +1,14 @@
+{
+  "type": "shortcut",
+  "name": "Transition an Issue",
+  "workflow": "#/workflows/transition_issue_wf",
+  "inputs": {
+    "updator": {
+      "value": "{{data.user_id}}",
+      "hidden": true
+    },
+    "interactivity_context": {
+      "value": "{{data.interactivity}}"
+    }
+  }
+}
