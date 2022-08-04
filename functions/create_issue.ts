@@ -30,9 +30,6 @@ const issueURL = "/rest/api/2/issue/"
     // the channel to post incident info to
     // const channel = inputs.channel
     console.log(inputs)
-    const client = SlackAPI(token, {});
-
-    client.views.publish()
 
     let url = "https://" + instance + issueURL
     console.log(url)

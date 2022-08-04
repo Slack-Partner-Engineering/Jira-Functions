@@ -1,0 +1,14 @@
+{
+  "type": "shortcut",
+  "name": "Find Jira Issues by Assignee",
+  "workflow": "#/workflows/find_issues_by_assignee_wf",
+  "inputs": {
+    "searcher": {
+      "value": "{{data.user_id}}",
+      "hidden": true
+    },
+    "interactivity_context": {
+      "value": "{{data.interactivity}}"
+    }
+  }
+}

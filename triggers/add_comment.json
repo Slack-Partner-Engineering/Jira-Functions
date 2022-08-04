@@ -1,9 +1,9 @@
 {
   "type": "shortcut",
-  "name": "Transition an Issue",
-  "workflow": "#/workflows/transition_issue_wf",
+  "name": "Add a comment to a Jira Issue",
+  "workflow": "#/workflows/add_comment_wf",
   "inputs": {
-    "updator": {
+    "creator": {
       "value": "{{data.user_id}}",
       "hidden": true
     },
