@@ -5,7 +5,8 @@ import { Channel } from "../utils/channel_utils.ts";
 import { Auth } from "../utils/get_auth.ts";
 import { CreateIssue } from "../manifest.ts";
 import { SlackAPI } from 'deno-slack-api/mod.ts';
-// import { BlockActionsRouter } from "deno-slack-sdk/mod.ts";
+
+import { BlockActionsRouter } from "deno-slack-sdk/mod.ts";
 
 const issueURL = "/rest/api/2/issue/"
 
@@ -29,9 +30,6 @@ const issueURL = "/rest/api/2/issue/"
     // the channel to post incident info to
     // const channel = inputs.channel
     console.log(inputs)
-    const client = SlackAPI(token, {});
-
-    client.views.publish()
 
     let url = "https://" + instance + issueURL
     console.log(url)
@@ -136,7 +134,9 @@ const issueURL = "/rest/api/2/issue/"
     let DMID = DMInfo.channel.id
 
     await channelObj.postToChannel(token, DMID, incidentBlock);
-    return { outputs: {} };
+    return {
+      completed: false,
+    };
 
   } catch (error) {
     const msg = error instanceof Error ? error.message : "unknown";
@@ -144,5 +144,29 @@ const issueURL = "/rest/api/2/issue/"
     return { error: msg };
   }
 };
+
+const router = BlockActionsRouter(CreateIssue);
+
+export const blockActions = router.addHandler(
+
+  ['transition_issue'], // The first argument to addHandler can accept an array of action_id strings, among many other formats!
+  // Check the API reference at the end of this document for the full list of supported options
+  async ({ action, body, token }) => { // The second argument is the handler function itself
+    console.log('Incoming action handler invocation', action);
+    const client = SlackAPI(token);
+
+    const outputs = {
+      reviewer: body.user.id,
+    };
+
+
+    // And now we can mark the function as 'completed' - which is required as
+    // we explicitly marked it as incomplete in the main function handler.
+    await client.functions.completeSuccess({
+      function_execution_id: body.function_data.execution_id,
+      outputs,
+    });
+});
+
 
 export default create_issue;

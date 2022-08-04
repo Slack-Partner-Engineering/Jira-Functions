@@ -1,4 +1,4 @@
-import { DefineFunction, Manifest, Schema } from "deno-slack-sdk/mod.ts";
+import { DefineFunction, Manifest, Schema, DefineWorkflow } from "deno-slack-sdk/mod.ts";
 
 export const FindIssueByID = DefineFunction({
   callback_id: "find_issue_by_id",
@@ -99,7 +99,7 @@ export const CreateIssue = DefineFunction({
         default: "To Do",
         enum: ["To Do", "In Progress", "In Review", "Done"],
         choices: [{
-           title: "To Do",
+          title: "To Do",
           value: "To Do",
         }, {
           title: "In Progress",
@@ -290,12 +290,342 @@ export const UpdateStatus = DefineFunction({
   },
 });
 
+// At present, this implementation requires the "hermes_workflow_tokens" toggle.
+const UpdateStatusWF = DefineWorkflow({
+  callback_id: "transition_issue_wf",
+  title: "Transition an Issue",
+  description: "Transition",
+  input_parameters: {
+    properties: {
+      updator: {
+        type: Schema.slack.types.user_id,
+      },
+      interactivity_context: {
+        type: "slack#/types/interactivity",
+        description: "Interactivity context",
+      },
+    },
+    required: ["updator"],
+  },
+});
+
+// At present, this implementation requires the "hermes_workflow_tokens" toggle.
+const CreateIssueWF = DefineWorkflow({
+  callback_id: "create_issue_wf",
+  title: "Create an Issue",
+  description: "Create an issue",
+  input_parameters: {
+    properties: {
+      creator: {
+        type: Schema.slack.types.user_id,
+      },
+      interactivity_context: {
+        type: "slack#/types/interactivity",
+        description: "Interactivity context",
+      },
+    },
+    required: ["creator"],
+  },
+});
+
+const FindIssueByIDWF = DefineWorkflow({
+  callback_id: "find_issue_by_id_wf",
+  title: "Find an Issue",
+  description: "Find an Issue by ID",
+  input_parameters: {
+    properties: {
+      searcher: {
+        type: Schema.slack.types.user_id,
+      },
+      interactivity_context: {
+        type: "slack#/types/interactivity",
+        description: "Interactivity context",
+      },
+    },
+    required: ["searcher"],
+  },
+});
+
+const AddCommentWF = DefineWorkflow({
+  callback_id: "add_comment_wf",
+  title: "Add a Comment",
+  description: "Add a comment to an isuse",
+  input_parameters: {
+    properties: {
+      creator: {
+        type: Schema.slack.types.user_id,
+      },
+      interactivity_context: {
+        type: "slack#/types/interactivity",
+        description: "Interactivity context",
+      },
+    },
+    required: ["creator"],
+  },
+});
+
+const AddCommentStep1 = AddCommentWF
+  .addStep(
+    "slack#/functions/open_form",
+    {
+      title: "Add a Comment to a Jira issue",
+      submit_label: "Submit",
+      interactivity: AddCommentWF.inputs.interactivity_context,
+      description: "Add a comment",
+      fields: {
+        elements: [
+          {
+            name: "issueKey",
+            title: "issueKey",
+            type: Schema.types.string,
+            description: "Key of the issue to add a comment to for",
+          },
+          {
+            name: "comment",
+            title: "comment",
+            type: Schema.types.string,
+            description: "The comment to add",
+          },
+        ],
+        required: ["issueKey", "comment"],
+      },
+    },
+  );
+
+  const AddCommentStep2 = AddCommentWF
+  .addStep(AddComment, {
+    creator: AddCommentWF.inputs.creator,
+    issueKey: AddCommentStep1.outputs.fields.issueKey,
+    comment: AddCommentStep1.outputs.fields.comment,
+  });
+
+const FindIssueByIDStep1 = FindIssueByIDWF
+  .addStep(
+    "slack#/functions/open_form",
+    {
+      title: "Find a Jira Issue by ID",
+      submit_label: "Find",
+      interactivity: UpdateStatusWF.inputs.interactivity_context,
+      description: "Get issue by ID",
+      fields: {
+        elements: [
+          {
+            name: "issueKey",
+            title: "issueKey",
+            type: Schema.types.string,
+            description: "Key of the issue to search for",
+          },
+        ],
+        required: ["issueKey"],
+      },
+    },
+  );
+
+  const FindIssueByIDStep2 = FindIssueByIDWF
+  .addStep(FindIssueByID, {
+    searcher: FindIssueByIDWF.inputs.searcher,
+    issueKey: FindIssueByIDStep1.outputs.fields.issueKey,
+  });
+
+
+const CreateIssueStep1 = CreateIssueWF
+  .addStep(
+    "slack#/functions/open_form",
+    {
+      title: "Create a new Jira Issue",
+      submit_label: "Create",
+      interactivity: CreateIssueWF.inputs.interactivity_context,
+      description: "Create a Jira issue",
+      fields: {
+        elements: [
+          {
+            name: "summary",
+            title: "Summary",
+            type: Schema.types.string,
+            description: "Summary of the issue",
+          },
+          {
+            name: "description",
+            title: "Description",
+            type: Schema.types.string,
+            description: "The description of the issue",
+          },
+          {
+            name: "issueType",
+            title: "Type of issue",
+            type: Schema.types.string,
+            description: "User to get issues for",
+            enum: ["Bug", "Improvement", "New Feature", "Epic"],
+            choices: [{
+              title: "Bug",
+              value: "Bug",
+            }, {
+              title: "Improvement",
+              value: "Improvement",
+            }, {
+              title: "New Feature",
+              value: "New Feature",
+            }],
+          },
+          {
+            name: "status",
+            title: "Status",
+            type: Schema.types.string,
+            description: "Status of the issue",
+            enum: ["To Do", "In Progress", "In Review", "Done"],
+              choices: [{
+                title: "To Do",
+                value: "To Do",
+              }, {
+                title: "In Progress",
+                value: "In Progress",
+              }, {
+                title: "In Review",
+                value: "In Review",
+              },
+              {
+                title: "Done",
+                value: "Done",
+              }],
+          },
+          {
+            name: "assigned_to",
+            title: "Assigned to",
+            type: Schema.slack.types.user_id,
+            description: "The description of the issue",
+          },
+        ],
+        required: ["summary", "issueType"],
+      },
+    },
+  );
+
+  const CreateIssueStep2 = CreateIssueWF
+  .addStep(CreateIssue, {
+    summary: CreateIssueStep1.outputs.fields.summary,
+    description: CreateIssueStep1.outputs.fields.description,
+    issueType: CreateIssueStep1.outputs.fields.issueType,
+    status: CreateIssueStep1.outputs.fields.status,
+    creator: CreateIssueWF.inputs.creator,
+    assigned_to: CreateIssueStep1.outputs.fields.assigned_to,
+  });
+
+const FindByAssigneeWF = DefineWorkflow({
+  callback_id: "find_issues_by_assignee_wf",
+  title: "Get issues by assignee",
+  description: "Get all issues assigned to a particular user",
+  input_parameters: {
+    properties: {
+      searcher: {
+        type: Schema.slack.types.user_id,
+        description: "User who is searching for the issue.",
+      },
+      interactivity_context: {
+        type: "slack#/types/interactivity",
+        description: "Interactivity context",
+      },
+    },
+    required: ["searcher"],
+  },
+});
+
+const FindByAssigneeStep1 = FindByAssigneeWF
+  .addStep(
+    "slack#/functions/open_form",
+    {
+      title: "Get all Jira Issues assigned to a particular user",
+      submit_label: "Transition",
+      interactivity: UpdateStatusWF.inputs.interactivity_context,
+      description: "Get all issues assigned to a particular user",
+      fields: {
+        elements: [
+          {
+            name: "assignee",
+            title: "assignee",
+            type: Schema.types.string,
+            description: "User to get issues for",
+            enum: ["Horea Porutiu", "Lauren Hooper", "Test"],
+            choices: [{
+              title: "Horea Porutiu",
+              value: "Horea Porutiu",
+            }, {
+              title: "Lauren Hooper",
+              value: "Lauren Hooper",
+            }, {
+              title: "Test User",
+              value: "Test",
+            }],
+          },
+        ],
+        required: ["assignee"],
+      },
+    },
+  );
+
+const FindByAssigneeStep2 = FindByAssigneeWF
+  .addStep(FindIssueByAssignee, {
+    searcher: FindByAssigneeWF.inputs.searcher,
+    assignee: FindByAssigneeStep1.outputs.fields.assignee,
+  });
+
+const UpdateStatusStep1 = UpdateStatusWF
+  .addStep(
+    "slack#/functions/open_form",
+    {
+      title: "Update the status of an Jira issue",
+      submit_label: "Transition",
+      interactivity: UpdateStatusWF.inputs.interactivity_context,
+      description: "Transition the status of an issue",
+      fields: {
+        elements: [
+          {
+            name: "issueKey",
+            title: "issueKey",
+            type: Schema.types.string,
+            description: "The key of the issue to update",
+          },
+          {
+            name: "status",
+            title: "Status",
+            type: Schema.types.string,
+            enum: ["11", "21", "31", "41"],
+            choices: [{
+              title: "To Do",
+              value: "11",
+            }, {
+              title: "In Progress",
+              value: "21",
+            }, {
+              title: "In Review",
+              value: "31",
+            },
+            {
+              title: "Done",
+              value: "41",
+            }],
+            description: "The new status of the issue",
+          },
+        ],
+        required: ["status", "issueKey"],
+      },
+    },
+  );
+
+const UpdateStatusStep2 = UpdateStatusWF
+  .addStep(UpdateStatus, {
+    updator: UpdateStatusWF.inputs.updator,
+    status: UpdateStatusStep1.outputs.fields.status,
+    issueKey:
+      UpdateStatusStep1.outputs.fields.issueKey,
+  });
+
 export default Manifest({
   name: "Jira Functions Deployed",
   description: "Create, Update, Find, and Close Jira Tickets all from Slack.",
   icon: "assets/icon.png",
-  functions: [FindIssueByID, FindIssueByAssignee, CreateIssue, AddComment, UpdateIssue, UpdateStatus],
+  functions: [FindIssueByID, FindIssueByAssignee, CreateIssue, AddComment, UpdateStatus],
   outgoingDomains: ["horeaporutiu.atlassian.net"],
-  botScopes: ["commands", "chat:write", "chat:write.public", "channels:read", "users:read", "im:write"],
+  botScopes: ["commands", "chat:write", "chat:write.public", "channels:read", "users:read", "im:write", "triggers:write"],
+  workflows: [FindIssueByIDWF, FindByAssigneeWF, CreateIssueWF, AddCommentWF, UpdateStatusWF],
 });
 

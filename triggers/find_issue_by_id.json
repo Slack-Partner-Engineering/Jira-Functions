@@ -1,0 +1,14 @@
+{
+  "type": "shortcut",
+  "name": "Find a Jira Issue by ID",
+  "workflow": "#/workflows/find_issue_by_id_wf",
+  "inputs": {
+    "searcher": {
+      "value": "{{data.user_id}}",
+      "hidden": true
+    },
+    "interactivity_context": {
+      "value": "{{data.interactivity}}"
+    }
+  }
+}
