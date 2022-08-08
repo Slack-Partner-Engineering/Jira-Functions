@@ -12,6 +12,7 @@ export class Channel {
     const resp = await client.apiCall("chat.postMessage", {
       channel: channel,
       blocks: incidentBlock,
+      unfurl_links: false
     });
 
     return resp;

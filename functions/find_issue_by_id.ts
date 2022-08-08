@@ -40,24 +40,34 @@ const find_issue_by_id: SlackFunctionHandler<typeof FindIssueByID.definition> = 
 
     //set variables to surface to UI
     const issueType = getTicketResp.fields.issuetype.name;
-    const ticketID = getTicketResp.id;
-    const description = getTicketResp.fields.description;
-    const assignee = getTicketResp.fields.assignee;
-    const reporter = getTicketResp.fields.reporter.displayName;
+    const ticketKey = getTicketResp.key;
+    let assignee;
+    if (assignee == null) {
+      assignee = 'Unassigned'
+    } else {
+      assignee = getTicketResp.fields.assignee.displayName;
+    }
+
+    const priority = getTicketResp.fields.priority.name;;
+    const summary = getTicketResp.fields.summary;
     const status = getTicketResp.fields.status.name;
     const comments = getTicketResp.fields.comment.comments;
     const link = "https://" + instance + "/browse/" + inputs.issueKey
+    let assigneeUsername, searcherUsername;
+    let user = new User();
 
-    console.log("issueType, ticketID, description, assignee, reporter, status, comments, link: ")
-    console.log(issueType, ticketID, description, assignee, reporter, status, comments, link)
+    if (inputs.searcher != null) {
+      searcherUsername = await user.getUserName(token, inputs.searcher)
+    }
   
     let block = new Blocks();
 
     let incidentBlock: any = [];
 
     // //assign Block Kit blocks for a better UI experience, check if someone was assigned    
-      incidentBlock = block.getBlocks(header, ticketID, description,
-        status, comments, reporter, assignee, link, incidentBlock, issueType)
+    incidentBlock = await block.viewIssueBlocks(header, ticketKey, summary,
+      status, comments, searcherUsername, assignee, link, incidentBlock, issueType, priority)
+
 
     //get channel name, and blocks to channel
     let channelObj = new Channel()
