@@ -1,10 +1,10 @@
 {
   "apps": {
-    "homesiteappworkshop": {
-      "name": "homesiteappworkshop",
-      "app_id": "A03Q4UZ41RR",
-      "team_id": "T0344K23CDU"
+    "devrelsandbox": {
+      "name": "devrelsandbox",
+      "app_id": "A03SUR9AVPV",
+      "team_id": "T038J6TH5PF"
     }
   },
-  "default": "homesiteappworkshop"
+  "default": "devrelsandbox"
 }
