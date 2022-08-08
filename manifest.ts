@@ -442,19 +442,16 @@ const CreateIssueStep1 = CreateIssueWF
             name: "summary",
             title: "Summary",
             type: Schema.types.string,
-            description: "Summary of the issue",
           },
           {
             name: "description",
             title: "Description",
             type: Schema.types.string,
-            description: "The description of the issue",
           },
           {
             name: "issueType",
             title: "Type of issue",
             type: Schema.types.string,
-            description: "User to get issues for",
             enum: ["Bug", "Improvement", "New Feature", "Epic"],
             choices: [{
               title: "Bug",
@@ -471,7 +468,6 @@ const CreateIssueStep1 = CreateIssueWF
             name: "status",
             title: "Status",
             type: Schema.types.string,
-            description: "Status of the issue",
             enum: ["To Do", "In Progress", "In Review", "Done"],
               choices: [{
                 title: "To Do",
@@ -492,7 +488,6 @@ const CreateIssueStep1 = CreateIssueWF
             name: "assigned_to",
             title: "Assigned to",
             type: Schema.slack.types.user_id,
-            description: "The description of the issue",
           },
         ],
         required: ["summary", "issueType"],
