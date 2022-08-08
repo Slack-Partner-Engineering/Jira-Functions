@@ -1,4 +1,38 @@
-import { DefineFunction, Manifest, Schema, DefineWorkflow } from "deno-slack-sdk/mod.ts";
+import { DefineFunction, DefineOAuth2Provider, Manifest, Schema, DefineWorkflow } from "deno-slack-sdk/mod.ts";
+
+//https://auth.atlassian.com/authorize?audience=api.atlassian.com&client_id=TcRihRBvODs8ZaHqoPasOGjRUCNi0pyR&scope=read%3Ajira-work%20manage%3Ajira-project%20manage%3Ajira-configuration%20read%3Ajira-user%20write%3Ajira-work%20manage%3Ajira-webhook%20manage%3Ajira-data-provider&redirect_uri=https%3A%2F%2Foauth2.slack.com%2Fexternal%2Fauth%2Fcallback&state=${YOUR_USER_BOUND_VALUE}&response_type=code&prompt=consent
+
+const AtlassianProvider = DefineOAuth2Provider({
+  provider_key: "atlassian",
+  provider_type: Schema.providers.oauth2.CUSTOM,
+  options: {
+    "provider_name": "Atlassian",
+    "authorization_url": "https://auth.atlassian.com/authorize",
+    "token_url": "https://auth.atlassian.com/oauth/token",
+    "client_id":
+      "TcRihRBvODs8ZaHqoPasOGjRUCNi0pyR",
+    "client_secret_env_key": "jira_client_secret",
+    "scope": [
+      "read:jira-work",
+      "manage:jira-project",
+      "manage:jira-configuration",
+      "read:jira-user",
+      "write:jira-work",
+      "manage:jira-webhook",
+      "manage:jira-data-provider",
+      "read:me",
+      "offline_access"
+    ],
+    "authorization_url_extras": {
+      "prompt": "consent",
+      "audience": "api.atlassian.com",
+    },
+    "identity_config": {
+      "url": "https://api.atlassian.com/me",
+      "account_identifier": "$.email",
+    },
+  },
+});
 
 export const FindIssueByID = DefineFunction({
   callback_id: "find_issue_by_id",
@@ -621,6 +655,9 @@ export default Manifest({
   functions: [FindIssueByID, FindIssueByAssignee, CreateIssue, AddComment, UpdateStatus],
   outgoingDomains: ["horeaporutiu.atlassian.net"],
   botScopes: ["commands", "chat:write", "chat:write.public", "channels:read", "users:read", "im:write", "triggers:write"],
+  externalAuthProviders: [
+    AtlassianProvider,
+  ],
   workflows: [FindIssueByIDWF, FindByAssigneeWF, CreateIssueWF, AddCommentWF, UpdateStatusWF],
 });
 
