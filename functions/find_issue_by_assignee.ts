@@ -11,6 +11,7 @@ const find_issue_by_assignee: SlackFunctionHandler<typeof FindIssueByAssignee.de
   { inputs, env, token },
 ) => {
   try {
+    console.log(`access token: ${inputs.atlassianAccessToken}.`);
     const instance = env["JIRA_INSTANCE"];
     const auth = new Auth()
     const basicAuth = await auth.getBasicAuth(env)
