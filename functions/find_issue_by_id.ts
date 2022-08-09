@@ -10,6 +10,8 @@ const find_issue_by_id: SlackFunctionHandler<typeof FindIssueByID.definition> = 
   { inputs, env, token },
 ) => {
   try {
+    //no need for API key + username, can just pass Access token as auth header
+    console.log(`access token: ${inputs.atlassianAccessToken}.`);
     const instance = env["JIRA_INSTANCE"];
     const auth = new Auth()
     const basicAuth = await auth.getBasicAuth(env)

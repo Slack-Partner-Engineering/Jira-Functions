@@ -48,9 +48,13 @@ export const FindIssueByID = DefineFunction({
       searcher: {
         type: Schema.slack.types.user_id,
         description: "User who is searching for the issue.",
-      }
+      },
+      atlassianAccessToken: {
+        type: Schema.slack.types.oauth2,
+        oauth2_provider_key: "atlassian",
+      },
     },
-    required: ["issueKey", "searcher"],
+    required: ["issueKey", "searcher", "atlassianAccessToken"],
   },
   output_parameters: {
     properties: {},
@@ -76,7 +80,7 @@ const FindIssueByIDWF = DefineWorkflow({
         oauth2_provider_key: "atlassian",
       },
     },
-    required: ["searcher", "atlassianAccessToken"],
+    required: ["searcher"],
   },
 });
 
@@ -105,9 +109,9 @@ const FindIssueByIDStep1 = FindIssueByIDWF
 
   const FindIssueByIDStep2 = FindIssueByIDWF
   .addStep(FindIssueByID, {
+    issueKey: FindIssueByIDStep1.outputs.fields.issueKey,
     searcher: FindIssueByIDWF.inputs.searcher,
     atlassianAccessToken: FindIssueByIDWF.inputs.atlassianAccessToken,
-    issueKey: FindIssueByIDStep1.outputs.fields.issueKey,
   });
 
 export const FindIssueByAssignee = DefineFunction({
