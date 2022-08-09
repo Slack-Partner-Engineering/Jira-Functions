@@ -58,6 +58,58 @@ export const FindIssueByID = DefineFunction({
   },
 });
 
+const FindIssueByIDWF = DefineWorkflow({
+  callback_id: "find_issue_by_id_wf",
+  title: "Find an Issue",
+  description: "Find an Issue by ID",
+  input_parameters: {
+    properties: {
+      searcher: {
+        type: Schema.slack.types.user_id,
+      },
+      interactivity_context: {
+        type: "slack#/types/interactivity",
+        description: "Interactivity context",
+      },
+      atlassianAccessToken: {
+        type: Schema.slack.types.oauth2,
+        oauth2_provider_key: "atlassian",
+      },
+    },
+    required: ["searcher", "atlassianAccessToken"],
+  },
+});
+
+
+const FindIssueByIDStep1 = FindIssueByIDWF
+  .addStep(
+    "slack#/functions/open_form",
+    {
+      title: "Find a Jira Issue by ID",
+      submit_label: "Find",
+      interactivity: FindIssueByIDWF.inputs.interactivity_context,
+      description: "Get issue by ID",
+      fields: {
+        elements: [
+          {
+            name: "issueKey",
+            title: "issueKey",
+            type: Schema.types.string,
+            description: "Key of the issue to search for",
+          },
+        ],
+        required: ["issueKey"],
+      },
+    },
+  );
+
+  const FindIssueByIDStep2 = FindIssueByIDWF
+  .addStep(FindIssueByID, {
+    searcher: FindIssueByIDWF.inputs.searcher,
+    atlassianAccessToken: FindIssueByIDWF.inputs.atlassianAccessToken,
+    issueKey: FindIssueByIDStep1.outputs.fields.issueKey,
+  });
+
 export const FindIssueByAssignee = DefineFunction({
   callback_id: "find_issue_by_assignee",
   title: "Find an Issue by Assignee",
@@ -84,7 +136,12 @@ export const FindIssueByAssignee = DefineFunction({
       searcher: {
         type: Schema.slack.types.user_id,
         description: "User who is searching for these issues.",
-      }
+      },
+      atlassianAccessToken: {
+        type: Schema.slack.types.oauth2,
+        oauth2_provider_key: "atlassian",
+        description: "Credential to use",
+      },
     },
     required: ["assignee", "searcher"],
   },
@@ -93,6 +150,70 @@ export const FindIssueByAssignee = DefineFunction({
     required: [],
   },
 });
+
+
+const FindByAssigneeWF = DefineWorkflow({
+  callback_id: "find_issues_by_assignee_wf",
+  title: "Get issues by assignee",
+  description: "Get all issues assigned to a particular user",
+  input_parameters: {
+    properties: {
+      searcher: {
+        type: Schema.slack.types.user_id,
+        description: "User who is searching for the issue.",
+      },
+      interactivity_context: {
+        type: "slack#/types/interactivity",
+        description: "Interactivity context",
+      },
+      atlassianAccessToken: {
+        type: Schema.slack.types.oauth2,
+        oauth2_provider_key: "atlassian",
+      },
+    },
+    required: ["searcher", "atlassianAccessToken"],
+  },
+});
+
+const FindByAssigneeStep1 = FindByAssigneeWF
+  .addStep(
+    "slack#/functions/open_form",
+    {
+      title: "Get all Jira Issues assigned to a particular user",
+      submit_label: "Transition",
+      interactivity: FindByAssigneeWF.inputs.interactivity_context,
+      description: "Get all issues assigned to a particular user",
+      fields: {
+        elements: [
+          {
+            name: "assignee",
+            title: "assignee",
+            type: Schema.types.string,
+            description: "User to get issues for",
+            enum: ["Horea Porutiu", "Lauren Hooper", "Test"],
+            choices: [{
+              title: "Horea Porutiu",
+              value: "Horea Porutiu",
+            }, {
+              title: "Lauren Hooper",
+              value: "Lauren Hooper",
+            }, {
+              title: "Test User",
+              value: "Test",
+            }],
+          },
+        ],
+        required: ["assignee"],
+      },
+    },
+  );
+
+const FindByAssigneeStep2 = FindByAssigneeWF
+  .addStep(FindIssueByAssignee, {
+    searcher: FindByAssigneeWF.inputs.searcher,
+    atlassianAccessToken: FindByAssigneeWF.inputs.atlassianAccessToken,
+    assignee: FindByAssigneeStep1.outputs.fields.assignee,
+  });
 
 export const CreateIssue = DefineFunction({
   callback_id: "create_issue",
@@ -362,23 +483,6 @@ const CreateIssueWF = DefineWorkflow({
   },
 });
 
-const FindIssueByIDWF = DefineWorkflow({
-  callback_id: "find_issue_by_id_wf",
-  title: "Find an Issue",
-  description: "Find an Issue by ID",
-  input_parameters: {
-    properties: {
-      searcher: {
-        type: Schema.slack.types.user_id,
-      },
-      interactivity_context: {
-        type: "slack#/types/interactivity",
-        description: "Interactivity context",
-      },
-    },
-    required: ["searcher"],
-  },
-});
 
 const AddCommentWF = DefineWorkflow({
   callback_id: "add_comment_wf",
@@ -432,35 +536,6 @@ const AddCommentStep1 = AddCommentWF
     issueKey: AddCommentStep1.outputs.fields.issueKey,
     comment: AddCommentStep1.outputs.fields.comment,
   });
-
-const FindIssueByIDStep1 = FindIssueByIDWF
-  .addStep(
-    "slack#/functions/open_form",
-    {
-      title: "Find a Jira Issue by ID",
-      submit_label: "Find",
-      interactivity: UpdateStatusWF.inputs.interactivity_context,
-      description: "Get issue by ID",
-      fields: {
-        elements: [
-          {
-            name: "issueKey",
-            title: "issueKey",
-            type: Schema.types.string,
-            description: "Key of the issue to search for",
-          },
-        ],
-        required: ["issueKey"],
-      },
-    },
-  );
-
-  const FindIssueByIDStep2 = FindIssueByIDWF
-  .addStep(FindIssueByID, {
-    searcher: FindIssueByIDWF.inputs.searcher,
-    issueKey: FindIssueByIDStep1.outputs.fields.issueKey,
-  });
-
 
 const CreateIssueStep1 = CreateIssueWF
   .addStep(
@@ -539,63 +614,6 @@ const CreateIssueStep1 = CreateIssueWF
     assigned_to: CreateIssueStep1.outputs.fields.assigned_to,
   });
 
-const FindByAssigneeWF = DefineWorkflow({
-  callback_id: "find_issues_by_assignee_wf",
-  title: "Get issues by assignee",
-  description: "Get all issues assigned to a particular user",
-  input_parameters: {
-    properties: {
-      searcher: {
-        type: Schema.slack.types.user_id,
-        description: "User who is searching for the issue.",
-      },
-      interactivity_context: {
-        type: "slack#/types/interactivity",
-        description: "Interactivity context",
-      },
-    },
-    required: ["searcher"],
-  },
-});
-
-const FindByAssigneeStep1 = FindByAssigneeWF
-  .addStep(
-    "slack#/functions/open_form",
-    {
-      title: "Get all Jira Issues assigned to a particular user",
-      submit_label: "Transition",
-      interactivity: UpdateStatusWF.inputs.interactivity_context,
-      description: "Get all issues assigned to a particular user",
-      fields: {
-        elements: [
-          {
-            name: "assignee",
-            title: "assignee",
-            type: Schema.types.string,
-            description: "User to get issues for",
-            enum: ["Horea Porutiu", "Lauren Hooper", "Test"],
-            choices: [{
-              title: "Horea Porutiu",
-              value: "Horea Porutiu",
-            }, {
-              title: "Lauren Hooper",
-              value: "Lauren Hooper",
-            }, {
-              title: "Test User",
-              value: "Test",
-            }],
-          },
-        ],
-        required: ["assignee"],
-      },
-    },
-  );
-
-const FindByAssigneeStep2 = FindByAssigneeWF
-  .addStep(FindIssueByAssignee, {
-    searcher: FindByAssigneeWF.inputs.searcher,
-    assignee: FindByAssigneeStep1.outputs.fields.assignee,
-  });
 
 const UpdateStatusStep1 = UpdateStatusWF
   .addStep(
