@@ -18,7 +18,7 @@ const find_issue_by_id: SlackFunctionHandler<typeof FindIssueByID.definition> = 
     // the channel to post incident info to
     const header = "Issue Info :information_source:";
     console.log('basicAuth: ')
-    console.log(basicAuth)
+    // console.log(basicAuth)
     let url = "https://" + instance + issueURL + inputs.issueKey
     console.log(url)
 
@@ -37,7 +37,7 @@ const find_issue_by_id: SlackFunctionHandler<typeof FindIssueByID.definition> = 
       .then((getTicketResp) => getTicketResp.json())
 
     console.log('getTicketResp:')
-    console.log(getTicketResp)
+    // console.log(getTicketResp)
     console.log('after create resp:')
 
     //set variables to surface to UI
@@ -77,6 +77,7 @@ const find_issue_by_id: SlackFunctionHandler<typeof FindIssueByID.definition> = 
     let DMID = DMInfo.channel.id
 
     await channelObj.postToChannel(token, DMID, incidentBlock);
+    console.log(`access token: ${inputs.atlassianAccessToken}.`);
 
     //output modal once the function finishes running
     return { outputs: {} };
