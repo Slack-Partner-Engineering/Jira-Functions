@@ -74,6 +74,16 @@ export class Blocks {
             "value": ticketKey
           },
           {
+            "type": "button",
+            "action_id": "add_comment",
+            "text": {
+              "type": "plain_text",
+              "text": "Add Comment",
+              "emoji": true
+            },
+            "value": ticketKey
+          },
+          {
             "type": "static_select",
             "action_id": "jira_more_actions",
             "placeholder": {
@@ -82,15 +92,6 @@ export class Blocks {
               "emoji": true
             },
             "options": [
-              {
-
-                "text": {
-                  "type": "plain_text",
-                  "text": "Comment",
-                  "emoji": true
-                },
-                "value": "comment"
-              },
               {
                 "text": {
                   "type": "plain_text",

@@ -3,7 +3,7 @@ import { Blocks } from "../utils/get_blocks.ts";
 import { User } from "../utils/get_user_info.ts";
 import { Channel } from "../utils/channel_utils.ts";
 import { Auth } from "../utils/get_auth.ts";
-import { FindIssueByID } from "../manifest.ts";
+import { FindIssueByID } from "./definition.ts";
 const issueURL = "/rest/api/2/issue/"
 
 const find_issue_by_id: SlackFunctionHandler<typeof FindIssueByID.definition> = async (
@@ -35,10 +35,6 @@ const find_issue_by_id: SlackFunctionHandler<typeof FindIssueByID.definition> = 
       },
     )
       .then((getTicketResp) => getTicketResp.json())
-
-    console.log('getTicketResp:')
-    // console.log(getTicketResp)
-    console.log('after create resp:')
 
     //set variables to surface to UI
     const issueType = getTicketResp.fields.issuetype.name;

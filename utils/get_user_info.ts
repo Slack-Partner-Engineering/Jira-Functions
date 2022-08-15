@@ -13,8 +13,8 @@ export class User {
   async getUserName(token: any, userID: any) {
     console.log('getUserInfo called in utils: ')
     console.log('userID: ')
-    console.log(userID)
-    console.log(token)
+    // console.log(userID)
+    // console.log(token)
 
     const client = SlackAPI(token, {});
 
@@ -22,7 +22,7 @@ export class User {
       user: userID,
     });
     console.log('userInfoResp in get user info: ')
-    console.log(userInfoResp)
+    // console.log(userInfoResp)
 
     let user: any = await userInfoResp.user
 
@@ -39,7 +39,7 @@ export class User {
   async isSlackUser(token: string, userID: string): Promise<boolean> {
     console.log('getUserInfo called in utils: ')
     console.log('userID: ')
-    console.log(userID)
+    // console.log(userID)
 
     const client = SlackAPI(token, {});
 
@@ -47,7 +47,7 @@ export class User {
       user: userID,
     });
     console.log('userInfoResp in get user info: ')
-    console.log(userInfoResp)
+    // console.log(userInfoResp)
     if (userInfoResp.error) {
       return false
     }
