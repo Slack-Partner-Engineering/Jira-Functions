@@ -1,8 +1,8 @@
 import type { SlackFunctionHandler } from "deno-slack-sdk/types.ts";
-import { Blocks } from "../utils/get_blocks.ts";
-import { User } from "../utils/get_user_info.ts";
-import { Channel } from "../utils/channel_utils.ts";
-import { Auth } from "../utils/get_auth.ts";
+import { Blocks } from "../../utils/get_blocks.ts";
+import { User } from "../../utils/get_user_info.ts";
+import { Channel } from "../../utils/channel_utils.ts";
+import { Auth } from "../../utils/get_auth.ts";
 import { UpdateStatus } from "./definition.ts";
 const issueURL = "/rest/api/2/issue/"
 

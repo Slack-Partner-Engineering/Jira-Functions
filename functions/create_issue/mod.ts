@@ -1,16 +1,16 @@
 
 import type { SlackFunctionHandler } from "deno-slack-sdk/types.ts";
-import type { CreateIssue } from "./definition.ts";
+import { CreateIssue } from "./definition.ts";
 
-import { Blocks } from "../utils/get_blocks.ts";
-import { User } from "../utils/get_user_info.ts";
-import { Channel } from "../utils/channel_utils.ts";
-import { Auth } from "../utils/get_auth.ts";
+import { Blocks } from "../../utils/get_blocks.ts";
+import { User } from "../../utils/get_user_info.ts";
+import { Channel } from "../../utils/channel_utils.ts";
+import { Auth } from "../../utils/get_auth.ts";
 import { SlackAPI } from 'deno-slack-api/mod.ts';
 
 import {
   updateStatusModal, addCommentModal
-} from "../views/index.ts";
+} from "../../views/index.ts";
 
 import { BlockActionsRouter } from "deno-slack-sdk/mod.ts";
 

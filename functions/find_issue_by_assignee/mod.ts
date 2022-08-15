@@ -1,7 +1,7 @@
 import type { SlackFunctionHandler } from "deno-slack-sdk/types.ts";
-import { Blocks } from "../utils/get_blocks.ts";
-import { Channel } from "../utils/channel_utils.ts";
-import { Auth } from "../utils/get_auth.ts";
+import { Blocks } from "../../utils/get_blocks.ts";
+import { Channel } from "../../utils/channel_utils.ts";
+import { Auth } from "../../utils/get_auth.ts";
 import { FindIssueByAssignee } from "./definition.ts";
 const searchURL = "/rest/api/2/search/?jql=assignee='"
 import { SlackAPI } from 'deno-slack-api/mod.ts';
