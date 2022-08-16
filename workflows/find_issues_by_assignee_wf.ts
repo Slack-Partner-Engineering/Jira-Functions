@@ -7,7 +7,7 @@ export const FindIssueByAssigneeWF = DefineWorkflow({
   description: "Get all issues assigned to a particular user",
   input_parameters: {
     properties: {
-      searcher: {
+      currentUser: {
         type: Schema.slack.types.user_id,
         description: "User who is searching for the issue.",
       },
@@ -15,12 +15,8 @@ export const FindIssueByAssigneeWF = DefineWorkflow({
         type: "slack#/types/interactivity",
         description: "Interactivity context",
       },
-      atlassianAccessToken: {
-        type: Schema.slack.types.oauth2,
-        oauth2_provider_key: "atlassian",
-      },
     },
-    required: ["searcher", "atlassianAccessToken"],
+    required: ["currentUser"],
   },
 });
 
@@ -59,7 +55,6 @@ const FindByAssigneeStep1 = FindIssueByAssigneeWF
 
 const FindByAssigneeStep2 = FindIssueByAssigneeWF
   .addStep(FindIssueByAssignee, {
-    searcher: FindIssueByAssigneeWF.inputs.searcher,
-    atlassianAccessToken: FindIssueByAssigneeWF.inputs.atlassianAccessToken,
+    currentUser: FindIssueByAssigneeWF.inputs.currentUser,
     assignee: FindByAssigneeStep1.outputs.fields.assignee,
   });

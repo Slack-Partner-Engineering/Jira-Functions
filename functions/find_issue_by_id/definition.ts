@@ -11,16 +11,12 @@ export const FindIssueByID = DefineFunction({
         type: Schema.types.string,
         description: "Key of the issue to look for",
       },
-      searcher: {
+      currentUser: {
         type: Schema.slack.types.user_id,
         description: "User who is searching for the issue.",
       },
-      atlassianAccessToken: {
-        type: Schema.slack.types.oauth2,
-        oauth2_provider_key: "atlassian",
-      },
     },
-    required: ["issueKey", "searcher", "atlassianAccessToken"],
+    required: ["issueKey", "currentUser"],
   },
   output_parameters: {
     properties: {},

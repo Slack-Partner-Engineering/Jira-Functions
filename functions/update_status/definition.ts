@@ -31,12 +31,12 @@ export const UpdateStatus = DefineFunction({
           value: "41",
         }],
       },
-      updator: {
+      currentUser: {
         type: Schema.slack.types.user_id,
         description: "User who updated the status.",
       },
     },
-    required: ["issueKey", "status", "updator"],
+    required: ["issueKey", "status", "currentUser"],
   },
   output_parameters: {
     properties: {},

@@ -20,7 +20,7 @@ const update_status: SlackFunctionHandler<typeof UpdateStatus.definition> = asyn
     // the channel to post incident info to
     console.log(inputs)
     const issueKey = inputs.issueKey
-    const updator = inputs.updator
+    const currentUser = inputs.currentUser
 
     let findUrl = "https://" + instance + issueURL + inputs.issueKey
     console.log(findUrl)
@@ -84,7 +84,7 @@ const update_status: SlackFunctionHandler<typeof UpdateStatus.definition> = asyn
     //get channel name, and blocks to channel
     let channelObj = new Channel()
     let user = new User()
-    let curUserName = await user.getUserName(token, updator)
+    let curUserName = await user.getUserName(token, currentUser)
     let block = new Blocks();
 
     let incidentBlock: any = [];
@@ -113,7 +113,7 @@ const update_status: SlackFunctionHandler<typeof UpdateStatus.definition> = asyn
 
     incidentBlock = await block.getStatusBlocks(incidentBlock, issueType, link, issueKey, curUserName, prevStatus, curStatus)
 
-    let DMInfo: any = await channelObj.startAppDM(token, updator)
+    let DMInfo: any = await channelObj.startAppDM(token, currentUser)
     let DMID = DMInfo.channel.id
 
     console.log(incidentBlock)

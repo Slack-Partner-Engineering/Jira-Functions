@@ -7,19 +7,15 @@ export const FindIssueByIDWF = DefineWorkflow({
   description: "Find an Issue by ID",
   input_parameters: {
     properties: {
-      searcher: {
+      currentUser: {
         type: Schema.slack.types.user_id,
       },
       interactivity_context: {
         type: "slack#/types/interactivity",
         description: "Interactivity context",
-      },
-      atlassianAccessToken: {
-        type: Schema.slack.types.oauth2,
-        oauth2_provider_key: "atlassian",
-      },
+      }
     },
-    required: ["searcher"],
+    required: ["currentUser"],
   },
 });
 
@@ -49,7 +45,6 @@ const FindIssueByIDStep1 = FindIssueByIDWF
 const FindIssueByIDStep2 = FindIssueByIDWF
   .addStep(FindIssueByID, {
     issueKey: FindIssueByIDStep1.outputs.fields.issueKey,
-    searcher: FindIssueByIDWF.inputs.searcher,
-    atlassianAccessToken: FindIssueByIDWF.inputs.atlassianAccessToken,
+    currentUser: FindIssueByIDWF.inputs.currentUser
   });
 

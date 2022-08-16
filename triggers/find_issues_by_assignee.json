@@ -3,7 +3,7 @@
   "name": "Find Jira Issues by Assignee",
   "workflow": "#/workflows/find_issues_by_assignee_wf",
   "inputs": {
-    "searcher": {
+    "currentUser": {
       "value": "{{data.user_id}}",
       "hidden": true
     },

@@ -11,7 +11,6 @@ const find_issue_by_assignee: SlackFunctionHandler<typeof FindIssueByAssignee.de
   { inputs, env, token },
 ) => {
   try {
-    console.log(`access token: ${inputs.atlassianAccessToken}.`);
     const instance = env["JIRA_INSTANCE"];
     const auth = new Auth()
     const basicAuth = await auth.getBasicAuth(env)
@@ -44,7 +43,7 @@ const find_issue_by_assignee: SlackFunctionHandler<typeof FindIssueByAssignee.de
 
     //get channel name, and blocks to channel
     let channelObj = new Channel()
-    let DMInfo: any = await channelObj.startAppDM(token, inputs.searcher)
+    let DMInfo: any = await channelObj.startAppDM(token, inputs.currentUser)
     let DMID = DMInfo.channel.id
 
     await channelObj.postToChannel(token, DMID, incidentBlock);

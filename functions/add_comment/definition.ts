@@ -15,12 +15,12 @@ export const AddComment = DefineFunction({
         type: Schema.types.string,
         description: "Comment to add.",
       },
-      creator: {
+      currentUser: {
         type: Schema.slack.types.user_id,
         description: "User who added the comment.",
       },
     },
-    required: ["issueKey", "comment", "creator"],
+    required: ["issueKey", "comment", "currentUser"],
   },
   output_parameters: {
     properties: {},

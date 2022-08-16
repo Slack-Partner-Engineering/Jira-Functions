@@ -53,7 +53,7 @@ export const CreateIssue = DefineFunction({
           value: "Done",
         }],
       },
-      creator: {
+      currentUser: {
         type: Schema.slack.types.user_id,
         description: "User who created the ticket",
       },

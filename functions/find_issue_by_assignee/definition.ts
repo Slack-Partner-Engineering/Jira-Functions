@@ -23,17 +23,12 @@ export const FindIssueByAssignee = DefineFunction({
           value: "Test",
         }],
       },
-      searcher: {
+      currentUser: {
         type: Schema.slack.types.user_id,
         description: "User who is searching for these issues.",
-      },
-      atlassianAccessToken: {
-        type: Schema.slack.types.oauth2,
-        oauth2_provider_key: "atlassian",
-        description: "Credential to use",
-      },
+      }
     },
-    required: ["assignee", "searcher"],
+    required: ["assignee", "currentUser"],
   },
   output_parameters: {
     properties: {},

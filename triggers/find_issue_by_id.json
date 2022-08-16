@@ -3,7 +3,7 @@
   "name": "Find a Jira Issue by ID",
   "workflow": "#/workflows/find_issue_by_id_wf",
   "inputs": {
-    "searcher": {
+    "currentUser": {
       "value": "{{data.user_id}}",
       "hidden": true
     },

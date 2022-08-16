@@ -9,7 +9,7 @@ export const CreateIssueWF = DefineWorkflow({
   description: "Create an issue",
   input_parameters: {
     properties: {
-      creator: {
+      currentUser: {
         type: Schema.slack.types.user_id,
       },
       interactivity_context: {
@@ -17,7 +17,7 @@ export const CreateIssueWF = DefineWorkflow({
         description: "Interactivity context",
       },
     },
-    required: ["creator"],
+    required: ["currentUser"],
   },
 });
 
@@ -95,6 +95,6 @@ const CreateIssueStep2 = CreateIssueWF
     description: CreateIssueStep1.outputs.fields.description,
     issueType: CreateIssueStep1.outputs.fields.issueType,
     status: CreateIssueStep1.outputs.fields.status,
-    creator: CreateIssueWF.inputs.creator,
+    currentUser: CreateIssueWF.inputs.currentUser,
     assigned_to: CreateIssueStep1.outputs.fields.assigned_to,
   });

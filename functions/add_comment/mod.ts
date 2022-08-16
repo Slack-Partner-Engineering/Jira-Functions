@@ -29,7 +29,7 @@ import { BlockActionsRouter } from "deno-slack-sdk/mod.ts";
     console.log(inputs)
     const issueKey = inputs.issueKey
     const comment = inputs.comment
-    const creator = inputs.creator
+    const creator = inputs.currentUser
 
     let url = "https://" + instance + issueURL + issueKey + "/comment"
     console.log(url)
@@ -63,7 +63,7 @@ import { BlockActionsRouter } from "deno-slack-sdk/mod.ts";
     //get channel name, and blocks to channel
     let channelObj = new Channel()
     let user = new User()
-    let curUserName = await user.getUserName(token, inputs.creator)
+    let curUserName = await user.getUserName(token, inputs.currentUser)
     let block = new Blocks();
 
     let incidentBlock: any = [];
@@ -72,7 +72,7 @@ import { BlockActionsRouter } from "deno-slack-sdk/mod.ts";
 
     incidentBlock = await block.getCommentBlocks(incidentBlock, commentText, link, issueKey, curUserName, comment)
 
-    let DMInfo: any = await channelObj.startAppDM(token, inputs.creator)
+    let DMInfo: any = await channelObj.startAppDM(token, inputs.currentUser)
     let DMID = DMInfo.channel.id
 
     console.log(incidentBlock)

@@ -5,13 +5,19 @@ import { Channel } from "../../utils/channel_utils.ts";
 import { Auth } from "../../utils/get_auth.ts";
 import { FindIssueByID } from "./definition.ts";
 const issueURL = "/rest/api/2/issue/"
+import { SlackAPI } from 'deno-slack-api/mod.ts';
+
+import {
+  updateStatusModal, addCommentModal
+} from "../../views/index.ts";
+
+import { BlockActionsRouter } from "deno-slack-sdk/mod.ts";
 
 const find_issue_by_id: SlackFunctionHandler<typeof FindIssueByID.definition> = async (
   { inputs, env, token },
 ) => {
   try {
     //no need for API key + username, can just pass Access token as auth header
-    console.log(`access token: ${inputs.atlassianAccessToken}.`);
     const instance = env["JIRA_INSTANCE"];
     const auth = new Auth()
     const basicAuth = await auth.getBasicAuth(env)
@@ -54,8 +60,8 @@ const find_issue_by_id: SlackFunctionHandler<typeof FindIssueByID.definition> = 
     let assigneeUsername, searcherUsername;
     let user = new User();
 
-    if (inputs.searcher != null) {
-      searcherUsername = await user.getUserName(token, inputs.searcher)
+    if (inputs.currentUser != null) {
+      searcherUsername = await user.getUserName(token, inputs.currentUser)
     }
   
     let block = new Blocks();
@@ -69,11 +75,10 @@ const find_issue_by_id: SlackFunctionHandler<typeof FindIssueByID.definition> = 
 
     //get channel name, and blocks to channel
     let channelObj = new Channel()
-    let DMInfo: any = await channelObj.startAppDM(token, inputs.searcher)
+    let DMInfo: any = await channelObj.startAppDM(token, inputs.currentUser)
     let DMID = DMInfo.channel.id
 
     await channelObj.postToChannel(token, DMID, incidentBlock);
-    console.log(`access token: ${inputs.atlassianAccessToken}.`);
 
     //output modal once the function finishes running
     return { outputs: {} };
@@ -86,3 +91,93 @@ const find_issue_by_id: SlackFunctionHandler<typeof FindIssueByID.definition> = 
 
 export default find_issue_by_id;
 
+
+const router = BlockActionsRouter(FindIssueByID);
+
+export const blockActions = router.addHandler(
+
+  ['transition_issue_from_find'], // The first argument to addHandler can accept an array of action_id strings, among many other formats!
+  // Check the API reference at the end of this document for the full list of supported options
+  async ({ action, body, inputs, token }) => { // The second argument is the handler function itself
+    const client = SlackAPI(token);
+
+    console.log('inside transition issue in find by id')
+
+    const ModalView = await updateStatusModal(
+      action.value,
+    );
+
+
+    const response = await client.views.open({
+      trigger_id: body.trigger_id,
+      view: ModalView,
+    });
+
+  });
+
+export const viewSubmission = async ({ body, view, inputs, token }: any) => {
+  if (view.callback_id === "update_status_modal") {
+    console.log('inside view sub ssue in find by id')
+
+    console.log(inputs)
+    let statusValue = view.state.values.update_status_block.update_status_action.selected_option.value
+
+    let issueKey = view.private_metadata
+
+    const client = SlackAPI(token, {});
+
+    let output = await client.apiCall("functions.run", {
+      function_reference: body.api_app_id +
+        "#/functions/update_status",
+      inputs: {
+        issueKey: issueKey,
+        status: statusValue,
+        updator: inputs.currentUser
+      },
+    });
+    console.log(output)
+
+
+  }
+
+  if (view.callback_id === "add_comment_modal") {
+    console.log('inside view add comment modal ssue in find by id')
+
+
+    let comment = view.state.values.add_comment_block.add_comment_action_from_find.value
+
+    let issueKey = view.private_metadata
+
+    const client = SlackAPI(token, {});
+
+    let output = await client.apiCall("functions.run", {
+      function_reference: body.api_app_id +
+        "#/functions/add_comment",
+      inputs: {
+        issueKey: issueKey,
+        creator: inputs.currentUser,
+        comment: comment,
+      },
+    });
+
+  }
+};
+
+
+export const AddCommentHandler = router.addHandler(
+
+  ['add_comment_from_find'],
+  async ({ action, body, inputs, token }) => {
+    console.log('sdfdsf')
+    const client = SlackAPI(token);
+
+    const ModalView = await addCommentModal(
+      action.value,
+    );
+
+    const response = await client.views.open({
+      trigger_id: body.trigger_id,
+      view: ModalView,
+    });
+
+  });

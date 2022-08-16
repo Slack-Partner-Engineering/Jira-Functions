@@ -169,17 +169,27 @@ export class Blocks {
       },
       {
         "type": "actions",
-        "block_id": "jira_issue_block",
+        "block_id": "jira_issue_block_from_find",
         "elements": [
           {
             "type": "button",
-            "action_id": "transition_issue",
+            "action_id": "transition_issue_from_find",
             "text": {
               "type": "plain_text",
               "text": "Transition",
               "emoji": true
             },
-            "value": "Transition"
+            "value": ticketKey
+          },
+          {
+            "type": "button",
+            "action_id": "add_comment_from_find",
+            "text": {
+              "type": "plain_text",
+              "text": "Add Comment",
+              "emoji": true
+            },
+            "value": ticketKey
           },
           {
             "type": "static_select",
@@ -190,15 +200,6 @@ export class Blocks {
               "emoji": true
             },
             "options": [
-              {
-
-                "text": {
-                  "type": "plain_text",
-                  "text": "Comment",
-                  "emoji": true
-                },
-                "value": "comment"
-              },
               {
                 "text": {
                   "type": "plain_text",

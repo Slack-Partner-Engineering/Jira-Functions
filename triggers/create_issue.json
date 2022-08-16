@@ -3,7 +3,7 @@
   "name": "Create a Jira Issue",
   "workflow": "#/workflows/create_issue_wf",
   "inputs": {
-    "creator": {
+    "currentUser": {
       "value": "{{data.user_id}}",
       "hidden": true
     },
