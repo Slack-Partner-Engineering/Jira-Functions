@@ -29,7 +29,6 @@ const create_issue: SlackFunctionHandler<typeof CreateIssue.definition> = async 
   { inputs, env, token },
 ) => {
   try {
-    console.log('hello')
     const projectKey = env["JIRA_PROJECT"];
     const instance = env["JIRA_INSTANCE"];
     const auth = new Auth()
@@ -145,7 +144,6 @@ export const blockActions = router.addHandler(
   // Check the API reference at the end of this document for the full list of supported options
   async ({ action, body, inputs, token }) => { // The second argument is the handler function itself
     const client = SlackAPI(token);
-    console.log('inside transition issue')
 
     const ModalView = await updateStatusModal(
       action.value,
@@ -161,19 +159,9 @@ export const blockActions = router.addHandler(
 
 export const viewSubmission = async ({ body, view, inputs, token }: any) => {
   if (view.callback_id === "update_status_modal") {
-    console.log('inside update status modal ')
-
-    console.log('view: ')
-    console.log(view)
 
     let statusValue = view.state.values.update_status_block.update_status_action.selected_option.value
-
     let issueKey = view.private_metadata
-    console.log('issueKey: ')
-    console.log(issueKey)
-
-    console.log(statusValue)
-    console.log(inputs.currentUser)
 
     const client = SlackAPI(token, {});
 
@@ -186,18 +174,13 @@ export const viewSubmission = async ({ body, view, inputs, token }: any) => {
         currentUser: inputs.currentUser
       },
     });
-    console.log(output)
 
   }
 
   if (view.callback_id === "add_comment_modal") {
 
-    console.log('inside aadd comment modal ')
-
     let comment = view.state.values.add_comment_block.add_comment_action.value
-
     let issueKey = view.private_metadata
-
     const client = SlackAPI(token, {});
 
     let output = await client.apiCall("functions.run", {
@@ -218,7 +201,6 @@ export const AddCommentHandler = router.addHandler(
 
   ['add_comment'],
   async ({ action, body, inputs, token }) => {
-    console.log('inside add comment hanlere ')
 
     const client = SlackAPI(token);
 

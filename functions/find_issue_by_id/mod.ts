@@ -23,10 +23,8 @@ const find_issue_by_id: SlackFunctionHandler<typeof FindIssueByID.definition> = 
     const basicAuth = await auth.getBasicAuth(env)
     // the channel to post incident info to
     const header = "Issue Info :information_source:";
-    console.log('basicAuth: ')
-    // console.log(basicAuth)
+
     let url = "https://" + instance + issueURL + inputs.issueKey
-    console.log(url)
 
     // https://<instancename>.atlassian.net/rest/api/2/issue/
     //API request to create a new incident in ServiceNow
@@ -34,7 +32,7 @@ const find_issue_by_id: SlackFunctionHandler<typeof FindIssueByID.definition> = 
       url,
       {
         method: "GET",
-        headers: {          
+        headers: {
           "Authorization": basicAuth,
           "Content-Type": "application/json",
         },
@@ -63,7 +61,7 @@ const find_issue_by_id: SlackFunctionHandler<typeof FindIssueByID.definition> = 
     if (inputs.currentUser != null) {
       searcherUsername = await user.getUserName(token, inputs.currentUser)
     }
-  
+
     let block = new Blocks();
 
     let incidentBlock: any = [];
@@ -81,12 +79,14 @@ const find_issue_by_id: SlackFunctionHandler<typeof FindIssueByID.definition> = 
     await channelObj.postToChannel(token, DMID, incidentBlock);
 
     //output modal once the function finishes running
-    return { outputs: {} };
+    return {
+      completed: false,
+    };
   } catch (error) {
     const msg = error instanceof Error ? error.message : "unknown";
     console.log(error);
     return { error: msg };
-  } 
+  }
 };
 
 export default find_issue_by_id;
@@ -100,8 +100,6 @@ export const blockActions = router.addHandler(
   // Check the API reference at the end of this document for the full list of supported options
   async ({ action, body, inputs, token }) => { // The second argument is the handler function itself
     const client = SlackAPI(token);
-
-    console.log('inside transition issue in find by id')
 
     const ModalView = await updateStatusModal(
       action.value,
@@ -117,9 +115,7 @@ export const blockActions = router.addHandler(
 
 export const viewSubmission = async ({ body, view, inputs, token }: any) => {
   if (view.callback_id === "update_status_modal") {
-    console.log('inside view sub ssue in find by id')
 
-    console.log(inputs)
     let statusValue = view.state.values.update_status_block.update_status_action.selected_option.value
 
     let issueKey = view.private_metadata
@@ -132,22 +128,15 @@ export const viewSubmission = async ({ body, view, inputs, token }: any) => {
       inputs: {
         issueKey: issueKey,
         status: statusValue,
-        updator: inputs.currentUser
+        currentUser: inputs.currentUser
       },
     });
-    console.log(output)
-
-
   }
 
   if (view.callback_id === "add_comment_modal") {
-    console.log('inside view add comment modal ssue in find by id')
 
-
-    let comment = view.state.values.add_comment_block.add_comment_action_from_find.value
-
+    let comment = view.state.values.add_comment_block.add_comment_action.value
     let issueKey = view.private_metadata
-
     const client = SlackAPI(token, {});
 
     let output = await client.apiCall("functions.run", {
@@ -155,7 +144,7 @@ export const viewSubmission = async ({ body, view, inputs, token }: any) => {
         "#/functions/add_comment",
       inputs: {
         issueKey: issueKey,
-        creator: inputs.currentUser,
+        currentUser: inputs.currentUser,
         comment: comment,
       },
     });
@@ -168,7 +157,6 @@ export const AddCommentHandler = router.addHandler(
 
   ['add_comment_from_find'],
   async ({ action, body, inputs, token }) => {
-    console.log('sdfdsf')
     const client = SlackAPI(token);
 
     const ModalView = await addCommentModal(
