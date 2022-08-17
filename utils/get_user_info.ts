@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import { SlackAPI } from 'deno-slack-api/mod.ts';
 
 export class User {
@@ -11,20 +12,14 @@ export class User {
    * inputs: userID. Needed to get display name from UserID.
    */
   async getUserName(token: any, userID: any) {
-    console.log('getUserInfo called in utils: ')
-    console.log('userID: ')
-    console.log(userID)
-    console.log(token)
 
     const client = SlackAPI(token, {});
 
     const userInfoResp = await client.apiCall("users.info", {
       user: userID,
     });
-    console.log('userInfoResp in get user info: ')
-    console.log(userInfoResp)
 
-    let user: any = await userInfoResp.user
+    const user: any = await userInfoResp.user
 
     return user.name;
   }
@@ -37,17 +32,13 @@ export class User {
    * input
    */ 
   async isSlackUser(token: string, userID: string): Promise<boolean> {
-    console.log('getUserInfo called in utils: ')
-    console.log('userID: ')
-    console.log(userID)
 
     const client = SlackAPI(token, {});
 
     const userInfoResp = await client.apiCall("users.info", {
       user: userID,
     });
-    console.log('userInfoResp in get user info: ')
-    console.log(userInfoResp)
+
     if (userInfoResp.error) {
       return false
     }

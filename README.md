@@ -7,7 +7,8 @@ This project aims to speed up the time to understand & implement functions with 
 2. [Jira Cloud Configuration Via Environmental Variables](#step-2-Jira-cloud-configuration-via-environmental-variables)
 3. [Add Environmental Variables in Hermes](#step-3-add-environmental-variables-in-hermes)
 4. [Deploy the App](#step-4-deploy-the-app)
-4. [Run the Functions](#step-4-run-the-functions)
+5. [Create the Triggers](#step-5-Create-the-triggers)
+6. [Run the Workflows](#step-6-run-the-workflows)
 
 ## Step 1. Clone the Repo
 
@@ -59,19 +60,21 @@ That's it, you're ready to deploy.
 $ hermes deploy
 ```
 
-## Step 5. Run the Functions
+## Step 5. Create the Triggers
 
-[![FindByID](https://media.slack-github.com/user/2212/files/f2b57aeb-493f-4b56-b049-80095ede916a)](https://media.slack-github.com/user/2212/files/7030e5bf-f872-48ed-94b3-5d9274020f0e)
+```bash
+$ hermes trigger create --trigger-def triggers/create_issue.json
+$ hermes trigger create --trigger-def triggers/find_issue_by_id.json
+$ hermes trigger create --trigger-def triggers/find_issues_by_assignee.json 
+```
 
-[![CreateUpdate](https://media.slack-github.com/user/2212/files/f2b57aeb-493f-4b56-b049-80095ede916a)](https://media.slack-github.com/user/2212/files/fcbc08be-1cf1-4365-9126-e6d4ff5b311a)
+Now, copy *each* `Shortcut URL` and paste that as a message into a channel. You should see a green `Run` button unfurl. That is how you will kick off your workflow!
 
-[![updateStatusFilterAssignee](https://media.slack-github.com/user/2212/files/f2b57aeb-493f-4b56-b049-80095ede916a)](https://media.slack-github.com/user/2212/files/2c9f87af-e239-4e5d-b5d6-ea7c64eb88d3)
+Great job! Now you should have three link triggers which are waiting to be used to kick off your workflow! Watch the video below to understand how to use these workflows!
 
+## Step 6. Run the Workflows
 
-
-
-
-Great job! Now you should be able to find your shortcut in the shortcuts menu! Go ahead and try it out by clicking on the shortcut and filling in the form.
+https://media.slack-github.com/user/2212/files/ee604e97-1e47-4d6c-bfec-3b948cb5ef79
 
 ## 🎊 Conclusion 🎊 
 
