@@ -3,8 +3,6 @@ import { SlackAPI } from 'deno-slack-api/mod.ts';
 
 export class Channel {
 
-  // This function returns the state - it converts from integer which is often returned 
-  // from ServiceNow to the value which is more readable. For example - 6 means Resolved.
   async postToChannel(token: any, channel: any, incidentBlock: any) {
 
     const client = SlackAPI(token, {});
@@ -31,7 +29,6 @@ export class Channel {
     return channelInfo;
   }
 
-  //use chat.postMessage
   async startAppDM(token: any, user: any) {
 
     const client = SlackAPI(token, {});
