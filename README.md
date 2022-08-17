@@ -74,11 +74,7 @@ Great job! Now you should have three link triggers which are waiting to be used 
 
 ## Step 6. Run the Workflows
 
-1. Create Issue Workflow
-
-2. Find an Issue by ID Workflow
-
-3. Find Issues by Assignee Workflow
+https://media.slack-github.com/user/2212/files/ee604e97-1e47-4d6c-bfec-3b948cb5ef79
 
 ## 🎊 Conclusion 🎊 
 

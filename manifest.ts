@@ -10,7 +10,7 @@ import { FindIssueByAssignee } from "./functions/find_issue_by_assignee/definiti
 import { FindIssueByAssigneeWF } from "./workflows/find_issues_by_assignee_wf.ts";
 
 export default Manifest({
-  name: "Jira Functions Deployed",
+  name: "Jira Functions POC",
   description: "Create, Update, Find, and Close Jira Tickets all from Slack.",
   icon: "assets/icon.png",
   workflows: [
