@@ -74,7 +74,15 @@ Great job! Now you should have three link triggers which are waiting to be used 
 
 ## Step 6. Run the Workflows
 
-https://media.slack-github.com/user/2212/files/ee604e97-1e47-4d6c-bfec-3b948cb5ef79
+1. Create a Jira Issue Workflow
+https://user-images.githubusercontent.com/10428517/185240742-585617fb-b714-4a76-be9f-4b2e4158e92e.mp4
+
+2. Find a Jira Issue by ID Workflow
+https://user-images.githubusercontent.com/10428517/185240753-1e19e961-2b6b-444c-a53a-28bf64dd82d1.mp4
+
+3. Find Jira Issues by Assignee Workflow
+
+https://user-images.githubusercontent.com/10428517/185240788-2c220791-9577-4146-8af3-a26b2f4e44c1.mp4
 
 ## 🎊 Conclusion 🎊 
 
