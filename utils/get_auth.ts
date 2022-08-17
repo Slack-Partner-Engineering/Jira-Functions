@@ -1,7 +1,7 @@
 // deno-lint-ignore-file no-explicit-any
 export class Auth {
 
-  // This function returns the Auth string needed to Auth into ServiceNow APIs using Basic Auth.
+  // This function returns the Basoc Auth string needed to Auth into Jira APIs using Basic Auth.
   async getBasicAuth(env: any) {
     //needed for auth,
     const username = env["JIRA_USERNAME"];
@@ -10,7 +10,7 @@ export class Auth {
     return basicAuth
   }
 
-  // This function returns the Auth string needed to Auth into ServiceNow APIs using Bearer Auth.
+  // This function returns the Auth string needed to Auth into Jira APIs using Bearer Auth.
   async getBearerAuth(env: any) {
     //needed for Bearer Auth
     const accessToken = env["ACCESS_TOKEN"];
