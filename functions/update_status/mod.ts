@@ -7,8 +7,7 @@ import { Auth } from "../../utils/get_auth.ts";
 import { UpdateStatus } from "./definition.ts";
 const issueURL = "/rest/api/2/issue/"
 
-/** This function lets a user in Slack add a comment to an already 
- * existing Jira issue. 
+/** This function lets a user in Slack update the status of an issue
  * @see https://developer.atlassian.com/server/jira/platform/jira-rest-api-example-add-comment-8946422/
  */
 const update_status: SlackFunctionHandler<typeof UpdateStatus.definition> = async (
