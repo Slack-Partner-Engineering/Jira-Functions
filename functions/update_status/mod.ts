@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import type { SlackFunctionHandler } from "deno-slack-sdk/types.ts";
 import { Blocks } from "../../utils/get_blocks.ts";
 import { User } from "../../utils/get_user_info.ts";
@@ -17,13 +18,11 @@ const update_status: SlackFunctionHandler<typeof UpdateStatus.definition> = asyn
     const instance = env["JIRA_INSTANCE"];
     const auth = new Auth()
     const basicAuth = await auth.getBasicAuth(env)
-    // the channel to post incident info to
-    console.log(inputs)
+
     const issueKey = inputs.issueKey
     const currentUser = inputs.currentUser
 
-    let findUrl = "https://" + instance + issueURL + inputs.issueKey
-    console.log(findUrl)
+    const findUrl = "https://" + instance + issueURL + inputs.issueKey
 
     const getTicketResp: any = await fetch(
       findUrl,
@@ -37,33 +36,21 @@ const update_status: SlackFunctionHandler<typeof UpdateStatus.definition> = asyn
     )
       .then((getTicketResp) => getTicketResp.json())
 
-    console.log("getTicketResp:")
-    console.log(getTicketResp)
-    console.log("after create resp:")
     const prevStatus = getTicketResp.fields.status.name
     const issueType = getTicketResp.fields.issuetype.name
-    console.log("prevStatus: ")
-    console.log(prevStatus)
-    console.log("issueType: ")
-    console.log(issueType)
 
     // API call to transition
-    let url = "https://" + instance + issueURL + issueKey + "/transitions"
-    console.log(url)
+    const url = "https://" + instance + issueURL + issueKey + "/transitions"
     const link = "https://" + instance + "/browse/" + issueKey
 
-    console.log("inputs.status")
-    console.log(inputs.status)
-    var requestBody: any = JSON.stringify({
+
+    const requestBody: any = JSON.stringify({
       "transition": {
         "id": inputs.status
       }
     })
 
-    console.log("requestBody")
-    console.log(requestBody)
-
-    const addCommentResp: any = await fetch(
+    await fetch(
       url,
       {
         method: "POST",
@@ -74,53 +61,39 @@ const update_status: SlackFunctionHandler<typeof UpdateStatus.definition> = asyn
         body: requestBody
       },
     )
-      .then((addCommentResp) => console.log(addCommentResp))
-
-
-    console.log("addCommentResp:")
-    console.log(addCommentResp)
-    console.log("after add comment resp:")
+      .then((addCommentResp) => addCommentResp.json())
 
     //get channel name, and blocks to channel
-    let channelObj = new Channel()
-    let user = new User()
-    let curUserName = await user.getUserName(token, currentUser)
-    let block = new Blocks();
+    const channelObj = new Channel()
+    const user = new User()
+    const curUserName = await user.getUserName(token, currentUser)
+    const block = new Blocks();
 
     let incidentBlock: any = [];
 
-    let commentText = "Someone updated the status on issue *" + inputs.issueKey + "*";
     let curStatus;
 
     switch (inputs.status) {
       case "11":
-        console.log("inside 11")
         curStatus = "To Do";
         break;
       case "21":
-        console.log("inside 11")
         curStatus = "In Progress";
         break;
       case "31":
-        console.log("inside 31")
         curStatus = "In Review";
         break;
       case "41":
-        console.log("inside 41")
         curStatus = "Done";
-        break;  
+        break;
     }
 
     incidentBlock = await block.getStatusBlocks(incidentBlock, issueType, link, issueKey, curUserName, prevStatus, curStatus)
 
-    let DMInfo: any = await channelObj.startAppDM(token, currentUser)
-    let DMID = DMInfo.channel.id
-
-    console.log(incidentBlock)
-
+    const DMInfo: any = await channelObj.startAppDM(token, currentUser)
+    const DMID = DMInfo.channel.id
 
     await channelObj.postToChannel(token, DMID, incidentBlock);
-
 
     //output modal once the function finishes running
     return { outputs: {} };

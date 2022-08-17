@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 export const updateStatusModal = (
   issueKey: any,
 ) => {
@@ -30,42 +31,42 @@ export const updateStatusModal = (
           "placeholder": {
             "type": "plain_text",
             "emoji": true,
-            "text": "Update the status"
+            "text": "Update the status",
           },
           "options": [
             {
               "text": {
                 "type": "plain_text",
                 "emoji": true,
-                "text": "To Do"
+                "text": "To Do",
               },
-              "value": "11"
+              "value": "11",
             },
             {
               "text": {
                 "type": "plain_text",
                 "emoji": true,
-                "text": "In Progress"
+                "text": "In Progress",
               },
-              "value": "21"
+              "value": "21",
             },
             {
               "text": {
                 "type": "plain_text",
                 "emoji": true,
-                "text": "In Review"
+                "text": "In Review",
               },
-              "value": "31"
+              "value": "31",
             },
             {
               "text": {
                 "type": "plain_text",
                 "emoji": true,
-                "text": "Done"
+                "text": "Done",
               },
-              "value": "41"
-            }
-          ]
+              "value": "41",
+            },
+          ],
         },
         "label": {
           "type": "plain_text",

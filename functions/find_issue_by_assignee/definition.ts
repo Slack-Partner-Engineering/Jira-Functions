@@ -9,26 +9,14 @@ export const FindIssueByAssignee = DefineFunction({
     properties: {
       assignee: {
         type: Schema.types.string,
-        description:
-          "Get issues assigned to which user?",
-        enum: ["Horea Porutiu", "Lauren Hooper", "Test"],
-        choices: [{
-          title: "Horea Porutiu",
-          value: "Horea Porutiu",
-        }, {
-          title: "Lauren Hooper",
-          value: "Lauren Hooper",
-        }, {
-          title: "Test User",
-          value: "Test",
-        }],
+        description: "Key of the issue to look for",
       },
       currentUser: {
         type: Schema.slack.types.user_id,
         description: "User who is searching for these issues.",
       }
     },
-    required: ["assignee", "currentUser"],
+    required: ["assignee"],
   },
   output_parameters: {
     properties: {},

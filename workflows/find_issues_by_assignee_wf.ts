@@ -24,15 +24,13 @@ const FindByAssigneeStep1 = FindIssueByAssigneeWF
   .addStep(
     "slack#/functions/open_form",
     {
-      title: "Get all Jira Issues assigned to a particular user",
-      submit_label: "Transition",
+      title: "Get Issues for a user",
+      submit_label: "Submit",
       interactivity: FindIssueByAssigneeWF.inputs.interactivity_context,
-      description: "Get all issues assigned to a particular user",
       fields: {
         elements: [
           {
             name: "assignee",
-            title: "assignee",
             type: Schema.types.string,
             description: "User to get issues for",
             enum: ["Horea Porutiu", "Lauren Hooper", "Test"],
@@ -53,8 +51,8 @@ const FindByAssigneeStep1 = FindIssueByAssigneeWF
     },
   );
 
-const FindByAssigneeStep2 = FindIssueByAssigneeWF
+FindIssueByAssigneeWF
   .addStep(FindIssueByAssignee, {
-    currentUser: FindIssueByAssigneeWF.inputs.currentUser,
     assignee: FindByAssigneeStep1.outputs.fields.assignee,
+    currentUser: FindIssueByAssigneeWF.inputs.currentUser,
   });

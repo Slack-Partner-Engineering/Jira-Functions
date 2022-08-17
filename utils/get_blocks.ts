@@ -1,13 +1,12 @@
+// deno-lint-ignore-file no-explicit-any
 export class Blocks {
 
-  async getIssueBlocks(header: any, ticketKey: any, summary: any, status: any, comments: any,
+  async getIssueBlocks(ticketKey: any, summary: any, status: any, comments: any,
     creatorUsername: any, assignee: any, incidentLink: any, blocks: any, issueType: any, priority: any) {
-    console.log('getNewIssueBlocks called in utils')
 
     if (comments.length > 0) {
       comments = comments[0].body
     } else if (comments == undefined) {
-      console.log('comments are undefined')
       comments = "N/A"
     }
 
@@ -108,14 +107,12 @@ export class Blocks {
     return blocks;
   }
 
-  async viewIssueBlocks(header: any, ticketKey: any, summary: any, status: any, comments: any,
+  async viewIssueBlocks(ticketKey: any, summary: any, status: any, comments: any,
     searcher: any, assignee: any, incidentLink: any, blocks: any, issueType: any, priority: any) {
-    console.log('viewIssueBlocks called in utils')
 
     if (comments.length > 0) {
       comments = comments[0].body
     } else if (comments == undefined) {
-      console.log('comments are undefined')
       comments = "N/A"
     }
 
@@ -216,7 +213,7 @@ export class Blocks {
     return blocks;
   }
 
-  getCommentBlocks(blocks: any, commentText: any, link: any, issueKey: any, curUser: any, comment: any) {
+  getCommentBlocks(blocks: any, link: any, issueKey: any, curUser: any, comment: any) {
 
     blocks.push({
       "type": "section",
@@ -250,37 +247,72 @@ export class Blocks {
       "text": {
         "type": "mrkdwn",
         "text": "🔎 There are " + numberOfIssues + " issues  assigned to " + "* 🙋🏽‍♀️ " + assignee + " 🙋🏻‍♂️*"
-        // `@${curUser}` + " updated the " + icon + " " + issueType +  " " + "<" + `${link}` + "|" + issueKey + "> \n" + ">" + comment,
       }
     });
 
     for (let i = 0; i < numberOfIssues; i++) {
 
-      let curIssue = issues[i]
-      //set variables to surface to UI
-      const issueType = curIssue.fields.issuetype.name;
-      const ticketID = curIssue.id;
+      const curIssue = issues[i]
       const description = curIssue.fields.description;
-      const assignee = curIssue.fields.assignee.displayName;
-      const reporter = curIssue.fields.reporter.displayName;
       const status = curIssue.fields.status.name;
-      const comments = '';
       const link = "https://" + instance + "/browse/" + curIssue.key
 
-      console.log('assignee: ')
-      console.log(assignee)
+      blocks.push(
+        {
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
+            "text": "<" + `${link}` + "|" + curIssue.key + "> \n" + ">" + "Summary: " + "*" + description + "*"
+              + "\n" + ">" + "Status: " + "*" + status + "*",
+          }
+        },
+        {
+          "type": "actions",
+          "block_id": "jira_issue_block_from_assignee" + i,
+          "elements": [
+            {
+              "type": "button",
+              "action_id": "transition_issue",
+              "text": {
+                "type": "plain_text",
+                "text": "Transition",
+                "emoji": true
+              },
+              "value": curIssue.key
+            },
+            {
+              "type": "button",
+              "action_id": "add_comment",
+              "text": {
+                "type": "plain_text",
+                "text": "Add Comment",
+                "emoji": true
+              },
+              "value": curIssue.key
+            },
+            {
+              "type": "static_select",
+              "action_id": "jira_more_actions",
+              "placeholder": {
+                "type": "plain_text",
+                "text": "More actions...",
+                "emoji": true
+              },
+              "options": [
+                {
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Assign",
+                    "emoji": true
+                  },
+                  "value": "assign"
+                }
+              ]
+            }
+          ]
+        },
+      );
 
-      console.log('reporter: ')
-      console.log(reporter)
-
-      blocks.push({
-        "type": "section",
-        "text": {
-          "type": "mrkdwn",
-          "text": "<" + `${link}` + "|" + curIssue.key + "> \n" + ">" + "Summary: " + "*" + description + "*"
-            + "\n" + ">" + "Status: " + "*" + status + "*",
-        }
-      });
     }
     return blocks;
   }

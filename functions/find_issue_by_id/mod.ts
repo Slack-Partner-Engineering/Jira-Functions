@@ -1,4 +1,7 @@
+// deno-lint-ignore-file no-explicit-any
 import type { SlackFunctionHandler } from "deno-slack-sdk/types.ts";
+import { call_add_comment } from "../../utils/call_add_comment.ts";
+import { call_update_status } from "../../utils/call_update_status.ts";
 import { Blocks } from "../../utils/get_blocks.ts";
 import { User } from "../../utils/get_user_info.ts";
 import { Channel } from "../../utils/channel_utils.ts";
@@ -6,6 +9,7 @@ import { Auth } from "../../utils/get_auth.ts";
 import { FindIssueByID } from "./definition.ts";
 const issueURL = "/rest/api/2/issue/"
 import { SlackAPI } from 'deno-slack-api/mod.ts';
+
 
 import {
   updateStatusModal, addCommentModal
@@ -21,10 +25,8 @@ const find_issue_by_id: SlackFunctionHandler<typeof FindIssueByID.definition> = 
     const instance = env["JIRA_INSTANCE"];
     const auth = new Auth()
     const basicAuth = await auth.getBasicAuth(env)
-    // the channel to post incident info to
-    const header = "Issue Info :information_source:";
 
-    let url = "https://" + instance + issueURL + inputs.issueKey
+    const url = "https://" + instance + issueURL + inputs.issueKey
 
     // https://<instancename>.atlassian.net/rest/api/2/issue/
     //API request to create a new incident in ServiceNow
@@ -50,31 +52,31 @@ const find_issue_by_id: SlackFunctionHandler<typeof FindIssueByID.definition> = 
       assignee = getTicketResp.fields.assignee.displayName;
     }
 
-    const priority = getTicketResp.fields.priority.name;;
+    const priority = getTicketResp.fields.priority.name;
     const summary = getTicketResp.fields.summary;
     const status = getTicketResp.fields.status.name;
     const comments = getTicketResp.fields.comment.comments;
     const link = "https://" + instance + "/browse/" + inputs.issueKey
-    let assigneeUsername, searcherUsername;
-    let user = new User();
+    let searcherUsername;
+    const user = new User();
 
     if (inputs.currentUser != null) {
       searcherUsername = await user.getUserName(token, inputs.currentUser)
     }
 
-    let block = new Blocks();
+    const block = new Blocks();
 
     let incidentBlock: any = [];
 
     // //assign Block Kit blocks for a better UI experience, check if someone was assigned    
-    incidentBlock = await block.viewIssueBlocks(header, ticketKey, summary,
+    incidentBlock = await block.viewIssueBlocks(ticketKey, summary,
       status, comments, searcherUsername, assignee, link, incidentBlock, issueType, priority)
 
 
     //get channel name, and blocks to channel
-    let channelObj = new Channel()
-    let DMInfo: any = await channelObj.startAppDM(token, inputs.currentUser)
-    let DMID = DMInfo.channel.id
+    const channelObj = new Channel()
+    const DMInfo: any = await channelObj.startAppDM(token, inputs.currentUser)
+    const DMID = DMInfo.channel.id
 
     await channelObj.postToChannel(token, DMID, incidentBlock);
 
@@ -98,7 +100,7 @@ export const blockActions = router.addHandler(
 
   ['transition_issue_from_find'], // The first argument to addHandler can accept an array of action_id strings, among many other formats!
   // Check the API reference at the end of this document for the full list of supported options
-  async ({ action, body, inputs, token }) => { // The second argument is the handler function itself
+  async ({ action, body, token }) => { // The second argument is the handler function itself
     const client = SlackAPI(token);
 
     const ModalView = await updateStatusModal(
@@ -106,7 +108,7 @@ export const blockActions = router.addHandler(
     );
 
 
-    const response = await client.views.open({
+    await client.views.open({
       trigger_id: body.trigger_id,
       view: ModalView,
     });
@@ -114,56 +116,29 @@ export const blockActions = router.addHandler(
   });
 
 export const viewSubmission = async ({ body, view, inputs, token }: any) => {
+
   if (view.callback_id === "update_status_modal") {
-
-    let statusValue = view.state.values.update_status_block.update_status_action.selected_option.value
-
-    let issueKey = view.private_metadata
-
-    const client = SlackAPI(token, {});
-
-    let output = await client.apiCall("functions.run", {
-      function_reference: body.api_app_id +
-        "#/functions/update_status",
-      inputs: {
-        issueKey: issueKey,
-        status: statusValue,
-        currentUser: inputs.currentUser
-      },
-    });
+    await call_update_status(view, token, body, inputs)
   }
 
   if (view.callback_id === "add_comment_modal") {
-
-    let comment = view.state.values.add_comment_block.add_comment_action.value
-    let issueKey = view.private_metadata
-    const client = SlackAPI(token, {});
-
-    let output = await client.apiCall("functions.run", {
-      function_reference: body.api_app_id +
-        "#/functions/add_comment",
-      inputs: {
-        issueKey: issueKey,
-        currentUser: inputs.currentUser,
-        comment: comment,
-      },
-    });
-
+    await call_add_comment(view, token, body, inputs)
   }
+
 };
 
 
 export const AddCommentHandler = router.addHandler(
 
   ['add_comment_from_find'],
-  async ({ action, body, inputs, token }) => {
+  async ({ action, body, token }) => {
     const client = SlackAPI(token);
 
     const ModalView = await addCommentModal(
       action.value,
     );
 
-    const response = await client.views.open({
+    await client.views.open({
       trigger_id: body.trigger_id,
       view: ModalView,
     });

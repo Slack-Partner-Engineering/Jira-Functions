@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 export class Auth {
 
   // This function returns the Auth string needed to Auth into ServiceNow APIs using Basic Auth.

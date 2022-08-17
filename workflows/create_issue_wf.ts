@@ -24,7 +24,7 @@ export const CreateIssueWF = DefineWorkflow({
 
 const CreateIssueStep1 = CreateIssueWF
   .addStep(
-    "slack#/functions/open_form",
+    Schema.slack.functions.OpenForm,
     {
       title: "Create a new Jira Issue",
       submit_label: "Create",
@@ -89,7 +89,7 @@ const CreateIssueStep1 = CreateIssueWF
     },
   );
 
-const CreateIssueStep2 = CreateIssueWF
+CreateIssueWF
   .addStep(CreateIssue, {
     summary: CreateIssueStep1.outputs.fields.summary,
     description: CreateIssueStep1.outputs.fields.description,
@@ -98,3 +98,4 @@ const CreateIssueStep2 = CreateIssueWF
     currentUser: CreateIssueWF.inputs.currentUser,
     assigned_to: CreateIssueStep1.outputs.fields.assigned_to,
   });
+  

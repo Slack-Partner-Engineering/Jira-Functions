@@ -16,7 +16,7 @@ export const FindIssueByID = DefineFunction({
         description: "User who is searching for the issue.",
       },
     },
-    required: ["issueKey", "currentUser"],
+    required: ["issueKey"],
   },
   output_parameters: {
     properties: {},

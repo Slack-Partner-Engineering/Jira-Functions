@@ -22,19 +22,18 @@ export const FindIssueByIDWF = DefineWorkflow({
 
 const FindIssueByIDStep1 = FindIssueByIDWF
   .addStep(
-    "slack#/functions/open_form",
+    Schema.slack.functions.OpenForm,
     {
       title: "Find a Jira Issue by ID",
       submit_label: "Find",
       interactivity: FindIssueByIDWF.inputs.interactivity_context,
-      description: "Get issue by ID",
       fields: {
         elements: [
           {
             name: "issueKey",
             title: "issueKey",
             type: Schema.types.string,
-            description: "Key of the issue to search for",
+            description: "Key of the issue to search for, ex: TEST-129",
           },
         ],
         required: ["issueKey"],
@@ -42,7 +41,7 @@ const FindIssueByIDStep1 = FindIssueByIDWF
     },
   );
 
-const FindIssueByIDStep2 = FindIssueByIDWF
+FindIssueByIDWF
   .addStep(FindIssueByID, {
     issueKey: FindIssueByIDStep1.outputs.fields.issueKey,
     currentUser: FindIssueByIDWF.inputs.currentUser

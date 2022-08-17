@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import type { SlackFunctionHandler } from "deno-slack-sdk/types.ts";
 import { Blocks } from "../../utils/get_blocks.ts";
 import { User } from "../../utils/get_user_info.ts";
@@ -5,45 +6,31 @@ import { Channel } from "../../utils/channel_utils.ts";
 import { Auth } from "../../utils/get_auth.ts";
 import { AddComment } from "./definition.ts";
 const issueURL = "/rest/api/2/issue/"
-import { SlackAPI } from 'deno-slack-api/mod.ts';
 
-import {
-  addCommentModal,
-} from "../../views/index.ts";
 
-import { BlockActionsRouter } from "deno-slack-sdk/mod.ts";
-
-  /** This function lets a user in Slack add a comment to an already 
-   * existing Jira issue. 
-   * @see https://developer.atlassian.com/server/jira/platform/jira-rest-api-example-add-comment-8946422/
-   */
-  const add_comment: SlackFunctionHandler<typeof AddComment.definition> = async (
+/** This function lets a user in Slack add a comment to an already 
+ * existing Jira issue. 
+ * @see https://developer.atlassian.com/server/jira/platform/jira-rest-api-example-add-comment-8946422/
+ */
+const add_comment: SlackFunctionHandler<typeof AddComment.definition> = async (
   { inputs, env, token },
 ) => {
   try {
-    const projectKey = env["JIRA_PROJECT"];
     const instance = env["JIRA_INSTANCE"];
     const auth = new Auth()
     const basicAuth = await auth.getBasicAuth(env)
     // the channel to post incident info to
-    console.log(inputs)
     const issueKey = inputs.issueKey
     const comment = inputs.comment
-    const creator = inputs.currentUser
 
-    let url = "https://" + instance + issueURL + issueKey + "/comment"
-    console.log(url)
-    let comments = await JSON.stringify(inputs.comment)
-    console.log('comments: ')
-    console.log(comments)
+    const url = "https://" + instance + issueURL + issueKey + "/comment"
     const link = "https://" + instance + "/browse/" + issueKey
 
-
     const requestBody: any = {
-      "body": inputs.comment 
+      "body": inputs.comment
     }
 
-    const addCommentResp: any = await fetch(
+    await fetch(
       url,
       {
         method: "POST",
@@ -56,30 +43,20 @@ import { BlockActionsRouter } from "deno-slack-sdk/mod.ts";
     )
       .then((addCommentResp) => addCommentResp.json())
 
-    console.log('addCommentResp:')
-    console.log(addCommentResp)
-    console.log('after add comment resp:')
-
     //get channel name, and blocks to channel
-    let channelObj = new Channel()
-    let user = new User()
-    let curUserName = await user.getUserName(token, inputs.currentUser)
-    let block = new Blocks();
+    const channelObj = new Channel()
+    const user = new User()
+    const curUserName = await user.getUserName(token, inputs.currentUser)
+    const block = new Blocks();
 
     let incidentBlock: any = [];
 
-    let commentText = "Someone commented on issue *" + inputs.issueKey + "*";
+    incidentBlock = await block.getCommentBlocks(incidentBlock, link, issueKey, curUserName, comment)
 
-    incidentBlock = await block.getCommentBlocks(incidentBlock, commentText, link, issueKey, curUserName, comment)
-
-    let DMInfo: any = await channelObj.startAppDM(token, inputs.currentUser)
-    let DMID = DMInfo.channel.id
-
-    console.log(incidentBlock)
-
+    const DMInfo: any = await channelObj.startAppDM(token, inputs.currentUser)
+    const DMID = DMInfo.channel.id
 
     await channelObj.postToChannel(token, DMID, incidentBlock);
-
 
     //output modal once the function finishes running
     return { outputs: {} };
