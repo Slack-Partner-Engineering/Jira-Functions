@@ -1,7 +1,7 @@
 // deno-lint-ignore-file no-explicit-any
 import { SlackAPI } from 'deno-slack-api/mod.ts';
 
-//call my function update_status via functions.run
+//call my function add_comment via functions.run
 //reusable so it can be used in all workflows
 export async function call_add_comment(view: any, token: string, body: any, inputs: any) {
 
