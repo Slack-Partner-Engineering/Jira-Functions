@@ -9,7 +9,7 @@ export async function call_add_comment(view: any, token: string, body: any, inpu
   const issueKey = view.private_metadata
   const client = SlackAPI(token, {});
 
-  await client.apiCall("functions.run", {
+  const output = await client.apiCall("functions.run", {
     function_reference: body.api_app_id +
       "#/functions/add_comment",
     inputs: {
@@ -18,5 +18,6 @@ export async function call_add_comment(view: any, token: string, body: any, inpu
       comment: comment,
     },
   });
+  console.log(output)
 
 }

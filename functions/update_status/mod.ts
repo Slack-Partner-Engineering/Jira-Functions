@@ -34,7 +34,7 @@ const update_status: SlackFunctionHandler<typeof UpdateStatus.definition> = asyn
         },
       },
     )
-      .then((getTicketResp) => getTicketResp.json())
+    .then((getTicketResp) => getTicketResp.json())
 
     const prevStatus = getTicketResp.fields.status.name
     const issueType = getTicketResp.fields.issuetype.name
@@ -43,8 +43,7 @@ const update_status: SlackFunctionHandler<typeof UpdateStatus.definition> = asyn
     const url = "https://" + instance + issueURL + issueKey + "/transitions"
     const link = "https://" + instance + "/browse/" + issueKey
 
-
-    const requestBody: any = JSON.stringify({
+    const requestBody: any = await JSON.stringify({
       "transition": {
         "id": inputs.status
       }
@@ -61,7 +60,7 @@ const update_status: SlackFunctionHandler<typeof UpdateStatus.definition> = asyn
         body: requestBody
       },
     )
-      .then((addCommentResp) => addCommentResp.json())
+      .then((addCommentResp) => addCommentResp.toString())
 
     //get channel name, and blocks to channel
     const channelObj = new Channel()

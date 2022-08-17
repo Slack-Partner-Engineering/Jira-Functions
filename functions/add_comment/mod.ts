@@ -41,7 +41,6 @@ const add_comment: SlackFunctionHandler<typeof AddComment.definition> = async (
         body: JSON.stringify(requestBody)
       },
     )
-      .then((addCommentResp) => addCommentResp.json())
 
     //get channel name, and blocks to channel
     const channelObj = new Channel()
