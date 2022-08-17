@@ -253,7 +253,7 @@ export class Blocks {
     for (let i = 0; i < numberOfIssues; i++) {
 
       const curIssue = issues[i]
-      const description = curIssue.fields.description;
+      const summary = curIssue.fields.summary;
       const status = curIssue.fields.status.name;
       const link = "https://" + instance + "/browse/" + curIssue.key
 
@@ -262,7 +262,7 @@ export class Blocks {
           "type": "section",
           "text": {
             "type": "mrkdwn",
-            "text": "<" + `${link}` + "|" + curIssue.key + "> \n" + ">" + "Summary: " + "*" + description + "*"
+            "text": "<" + `${link}` + "|" + curIssue.key + "> \n" + ">" + "Summary: " + "*" + summary + "*"
               + "\n" + ">" + "Status: " + "*" + status + "*",
           }
         },
