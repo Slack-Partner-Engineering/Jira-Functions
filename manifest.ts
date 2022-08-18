@@ -1,5 +1,4 @@
 import { Manifest} from "deno-slack-sdk/mod.ts";
-import { AtlassianProvider } from "./auth/auth.ts";
 import { CreateIssue } from "./functions/create_issue/definition.ts";
 import { CreateIssueWF } from "./workflows/create_issue_wf.ts";
 import { AddComment } from "./functions/add_comment/definition.ts";
@@ -28,8 +27,5 @@ export default Manifest({
   ],
   outgoingDomains: ["horeaporutiu.atlassian.net"],
   botScopes: ["commands", "chat:write", "chat:write.public", "channels:read", "users:read", "im:write", "triggers:write"],
-  externalAuthProviders: [
-    AtlassianProvider,
-  ],
 });
 
